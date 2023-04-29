@@ -356,8 +356,8 @@ async def load_mfy(message: types.Message, state: FSMContext):
 
     text = await take_text(status_lang, step, message.from_user.id, message)
     await bot.send_message(message.from_user.id, text,
-                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkak'),
-                                                                                      KeyboardButton('Ayol')))
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(_('Erkak')),
+                                                                                      KeyboardButton(_('Ayol'))))
 
 
 @dp.message_handler(state=Regist.sex)
@@ -547,16 +547,18 @@ async def createUser(state, user_id):
 
                 if object[9] == 'uz':
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_uz=object[2]))
-                    tuman_id = await get_tuman_id(object[3])
+                    tuman_id = await get_tuman_id(object[3], object[9])
                     mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz=object[4]))
 
 
                 if object[9] == 'ru':
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_ru=object[2]))
-                    tuman_id = await get_tuman_id(object[3])
+                    mfy = await db.session.execute(select(db.Mfy).filter_by(name_ru=object[4]))
+                    tuman_id = await get_tuman_id(object[3], object[9])
                 if object[9] == 'uz_kir':
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_uz_kir=object[2]))
-                    tuman_id = await get_tuman_id(object[3])
+                    mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz_kir=object[4]))
+                    tuman_id = await get_tuman_id(object[3], object[9])
                 cat = cat.scalar()
                 mfy = mfy.scalar()
 
@@ -571,8 +573,13 @@ async def createUser(state, user_id):
                 await db.session.commit()
 
 
-async def get_tuman_id(tuman: str) -> db.Tuman.id:
-    tuman = await db.session.execute(select(db.Tuman).filter_by(name_uz2=tuman))
+async def get_tuman_id(tuman: str, lang: str) -> db.Tuman.id:
+    if lang == 'uz':
+        tuman = await db.session.execute(select(db.Tuman).filter_by(name_uz2=tuman))
+    elif lang == 'ru':
+        tuman = await db.session.execute(select(db.Tuman).filter_by(name_ru2=tuman))
+    else:
+        tuman = await db.session.execute(select(db.Tuman).filter_by(name_uz_kir2=tuman))
 
     tuman = tuman.scalar()
     return tuman.id
