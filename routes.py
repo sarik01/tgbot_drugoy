@@ -355,10 +355,18 @@ async def load_mfy(message: types.Message, state: FSMContext):
         await Regist.next()
 
     text = await take_text(status_lang, step, message.from_user.id, message)
-    await bot.send_message(message.from_user.id, text,
-                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(_('Erkak')),
-                                                                                      KeyboardButton(_('Ayol'))))
-
+    if status_lang == 'uz':
+        await bot.send_message(message.from_user.id, text,
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkak'),
+                                                                                      KeyboardButton('Ayol')))
+    elif status_lang == 'ru':
+        await bot.send_message(message.from_user.id, text,
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Мужчина'),
+                                                                                          KeyboardButton('Женщина')))
+    else:
+        await bot.send_message(message.from_user.id, text,
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Эркак'),
+                                                                                          KeyboardButton('Аёл')))
 
 @dp.message_handler(state=Regist.sex)
 async def load_sex(message: types.Message, state: FSMContext):
@@ -1048,3 +1056,5 @@ async def change_mfy(message: types.Message, state: FSMContext):
         ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
               ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
             KeyboardButton(_('Sozlamalar'))))
+
+

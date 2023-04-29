@@ -3,3 +3,5 @@ alembic.ini
 /alembic
 config.py
 /__pycache__
+/db/__pycache__
+/utils/__pycache__

@@ -89,10 +89,11 @@ class Mfy(Base):
     tuman_id = Column(Integer, ForeignKey('tuman.id'))
 
 async def get_lang(user_id) -> str:
-    try:
-        user = await session.execute(select(User).filter_by(tg_user_id=int(user_id)))
-        user = user.scalar()
 
+    user = await session.execute(select(User).filter_by(tg_user_id=int(user_id)))
+    user = user.scalar()
+
+    if user:
         return user.lang
-    except:
+    else:
         return 'uz'
