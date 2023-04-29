@@ -910,17 +910,17 @@ async def get_murojat(message: types.Message):
     if user.lang == 'uz':
 
         message = f'''№{app.id}
-'sizning murojaatingiz': {app.application}
+Sizning murojaatingiz: {app.application}
             '''
     elif user.lang == 'ru':
 
         message = f'''№{app.id}
-'Ваше обращение': {app.application}
+Ваше обращение: {app.application}
             '''
     else:
 
         message = f'''№{app.id}
-'Сизнинг мурожатингиз': {app.application}
+Сизнинг мурожатингиз: {app.application}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(_('Mening murojaatlarim'))
