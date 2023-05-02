@@ -309,7 +309,7 @@ async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
     else:
         tuman_m = await db.session.execute(select(db.Tuman).filter_by(name_uz_kir2=tuman))
         tuman_m = tuman_m.scalar()
-        tumans = await db.session.execute(select(db.Mfy).filter_by(viloyat_id=tuman_m.id))
+        tumans = await db.session.execute(select(db.Mfy).filter_by(tuman_id=tuman_m.id))
         tumans = tumans.scalars()
 
         kb_generator = [x.name_uz_kir for x in tumans]
