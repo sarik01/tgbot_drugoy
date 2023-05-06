@@ -289,6 +289,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
         else:
             await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
 
+
 async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
     if lang == 'uz':
         viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_uz=viloyat))
@@ -457,15 +458,18 @@ async def load_mfy(message: types.Message, state: FSMContext):
     if data['lang'] == 'uz':
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkak'),
-                                                                                          KeyboardButton('Ayol')).add('Orqaga'))
+                                                                                          KeyboardButton('Ayol')).add(
+                                   'Orqaga'))
     elif data['lang'] == 'ru':
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Мужчина'),
-                                                                                          KeyboardButton('Женщина')).add('Назад'))
+                                                                                          KeyboardButton(
+                                                                                              'Женщина')).add('Назад'))
     else:
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Эркак'),
-                                                                                          KeyboardButton('Аёл')).add('Оркагя'))
+                                                                                          KeyboardButton('Аёл')).add(
+                                   'Оркагя'))
 
 
 @dp.message_handler(state=Regist.sex)
@@ -487,7 +491,7 @@ async def load_sex(message: types.Message, state: FSMContext):
             await Regist.previous()
             return
         elif message.text == 'Назад':
-            text = await take_text('ru', 5, message.from_user.id, message)  
+            text = await take_text('ru', 5, message.from_user.id, message)
             kb = await generate_mahalla_kb(data['tuman'], 'ru')
             await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
             await Regist.previous()
@@ -497,8 +501,9 @@ async def load_sex(message: types.Message, state: FSMContext):
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
     if data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
-    elif data['lang']  == 'uz_kir':
+        await bot.send_message(message.from_user.id, text,
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
+    elif data['lang'] == 'uz_kir':
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Оркагя'))
     else:
@@ -506,7 +511,7 @@ async def load_sex(message: types.Message, state: FSMContext):
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
 
 
-@dp.message_handler( state=Regist.years) # regexp=r"^(\d+)$"
+@dp.message_handler(state=Regist.years)  # regexp=r"^(\d+)$"
 async def load_years(message: types.Message, state: FSMContext):
     step = 8
     try:
@@ -515,12 +520,12 @@ async def load_years(message: types.Message, state: FSMContext):
             async with state.proxy() as data:
                 data['years'] = int(message.text)
 
-
                 await Regist.next()
 
             text = await take_text(data['lang'], step, message.from_user.id, message)
             if data['lang'] == 'uz':
-                await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
+                await bot.send_message(message.from_user.id, text,
+                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
             elif data['lang'] == 'uz_kir':
                 await bot.send_message(message.from_user.id, text,
                                        reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Оркагя'))
@@ -574,6 +579,7 @@ async def load_years(message: types.Message, state: FSMContext):
         else:
             await bot.send_message(message.from_user.id, '15-35')
             return
+
 
 async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
     viloyats = await db.session.execute(select(db.Viloyat))
@@ -1108,16 +1114,19 @@ async def get_murojat(message: types.Message):
 
         message = f'''№{app.id}
 Sizning murojaatingiz: {app.application}
+Vremya: {app.created_at.strftime("%Y.%m.%d")}
             '''
     elif user.lang == 'ru':
 
         message = f'''№{app.id}
 Ваше обращение: {app.application}
+Vremya: {app.created_at.strftime("%Y.%m.%d")}
             '''
     else:
 
         message = f'''№{app.id}
 Сизнинг мурожатингиз: {app.application}
+Vremya: {app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(_('Mening murojaatlarim'))

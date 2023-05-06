@@ -1,4 +1,6 @@
-from sqlalchemy import Column, String, Integer, Text, ForeignKey, select, BigInteger
+import datetime
+
+from sqlalchemy import Column, String, Integer, Text, ForeignKey, select, BigInteger, DateTime
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base, relationship
 from config import SQLALCHEMY_DATABASE_URI
@@ -39,6 +41,7 @@ class Application(Base):
     sent = Column('sent', String)
     lang = Column('lang', String)
     user_id = Column(Integer, ForeignKey('user.id'))
+    created_at = Column('created_at', DateTime, default=datetime.datetime.now())
 
 
 
