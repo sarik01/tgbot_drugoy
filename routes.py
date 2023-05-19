@@ -15,7 +15,8 @@ from loader import dp, bot, _
 
 b1 = KeyboardButton("O'zbekcha")
 b2 = KeyboardButton('Русский')
-b3 = KeyboardButton("Ўзбекча")
+b3 = KeyboardButton("Qoraqalpoqcha")
+
 
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_client.add(b1).add(b2).add(b3)
@@ -72,8 +73,8 @@ async def commands_start(message: types.Message):
 
         multitext = text + '\n' + text_ru + '\n' + text_kir
 
-        lang_ru = 'Уважаемый заявитель, выберите язык интерфейса!'
-        lang_uz = "Xurmatli murojaatchi, iltimos intefeys tilini tanlang!"
+        lang_ru = 'Уважаемый гражданин, пожалуйста выберите язык интерфейса!'
+        lang_uz = "Hurmatli fuqaro, iltimos interfeys tilini tanlang!"
         lang_kir = 'Хурматли мурожаатчи, илттимос интерфейс тилини танланг!'
 
         multilang = lang_uz + '\n' + lang_ru + '\n' + lang_kir
@@ -176,8 +177,8 @@ async def murojat_handlers_ru(message: types.Message, state: FSMContext):
         await Regist.name.set()
 
 
-@dp.message_handler(Text(equals="Мурожаатингизни қолдиринг"))
-@dp.message_handler(Text(equals="Ўзбекча"))
+@dp.message_handler(Text(equals="Múrájatlarıńıstı qaldıriń"))
+@dp.message_handler(Text(equals="Qoraqalpoqcha"))
 async def murojat_handlers_uz_kir(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
 
@@ -206,7 +207,7 @@ async def murojat_handlers_uz_kir(message: types.Message, state: FSMContext):
     else:
         text = await take_text('uz_kir', step, message.from_user.id, message)
         await bot.send_message(user_id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Бекор қилиш')))
+            KeyboardButton('Biykar etiw')))
         await Regist.name.set()
 
 
@@ -227,7 +228,7 @@ async def load_name(message: types.Message, state: FSMContext):
         await state.finish()
         await bot.send_message(message.from_user.id, 'Отмена', reply_markup=kb_client)
         return
-    elif object[0] == 'Бекор қилиш':
+    elif object[0] == 'Biykar etiw':
         await state.finish()
         await bot.send_message(message.from_user.id, 'Бекор қилиш', reply_markup=kb_client)
         return
@@ -260,7 +261,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
 
         text = await take_text('uz_kir', 1, message.from_user.id, message)
         await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Бекор қилиш')))
+            KeyboardButton('Biykar etiw')))
         await Regist.previous()
         return
     elif message.text == 'Orqaga':
@@ -467,8 +468,8 @@ async def load_mfy(message: types.Message, state: FSMContext):
                                                                                               'Женщина')).add('Назад'))
     else:
         await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Эркак'),
-                                                                                          KeyboardButton('Аёл')).add(
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkek'),
+                                                                                          KeyboardButton('Hayal')).add(
                                    'Оркагя'))
 
 
@@ -681,12 +682,12 @@ async def load_ad(message: types.Message, state: FSMContext):
                                      ).add(KeyboardButton("Поменять язык")).add(
                                    KeyboardButton('Настройки')))
     else:
-        await bot.send_message(message.from_user.id, 'Асосий меню',
+        await bot.send_message(message.from_user.id, 'Tiykarǵı menyu',
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                   KeyboardButton('Менинг мурожаатларим')
-                               ).add(KeyboardButton('Мурожаатингизни қолдиринг')
-                                     ).add(KeyboardButton("Тилни ўзгартириш")).add(
-                                   KeyboardButton('Созламалар')))
+                                   KeyboardButton('Meniń múrájatlarım')
+                               ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń')
+                                     ).add(KeyboardButton("Tildi ózgertiw")).add(
+                                   KeyboardButton('Sazlamalar')))
 
 
 async def sql_read2(message, lang, step):
@@ -710,8 +711,8 @@ async def createUser(state, user_id):
         object = tuple(data.values())
         print(object)
 
-        if data['ad'] == 'Бекор қилиш' or object[0] == 'Бекор қилиш':
-            await bot.send_message(user_id, 'Бекор қилиш', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+        if data['ad'] == 'Biykar etiw' or object[0] == 'Biykar etiw':
+            await bot.send_message(user_id, 'Biykar etiw', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
                 KeyboardButton(_('Mening murojaatlarim'))
             ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
                   ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
@@ -798,7 +799,7 @@ async def get_tuman_id(tuman: str, lang: str) -> db.Tuman.id:
 
 @dp.message_handler(Text(equals='Bekor qilish'))
 @dp.message_handler(Text(equals='Отмена'))
-@dp.message_handler(Text(equals='Бекор қилиш'))
+@dp.message_handler(Text(equals='Biykar etiw'))
 async def cancel_purchase(message: types.Message):
     await bot.send_message(message.from_user.id, _('Bekor qilish'),
                            reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
@@ -875,7 +876,7 @@ async def send_mail2(message: str) -> str:
 
 @dp.message_handler(Text(equals='Mening murojaatlarim'))
 @dp.message_handler(Text(equals='Мои обращения'))
-@dp.message_handler(Text(equals='Менинг мурожаатларим'))
+@dp.message_handler(Text(equals='Meniń múrájatlarım'))
 async def my_applications(message: types.Message):
     user_id = message.from_user.id
 
@@ -885,27 +886,27 @@ async def my_applications(message: types.Message):
 
 
 def lang_change_handler():
-    langs = ["O'zbekchaga", 'На русский', "Ўзбекчага"]
+    langs = ["O'zbekchaga", 'На русский', "Qoraqolpoqchaga"]
     for i in langs:
         dp.register_message_handler(change_lang, Text(equals=i))
 
 
 @dp.message_handler(Text(equals="Tilni o'zgartirish"))
 @dp.message_handler(Text(equals="Поменять язык"))
-@dp.message_handler(Text(equals="Тилни ўзгартириш"))
+@dp.message_handler(Text(equals="Tildi ózgertiw"))
 async def select_lang(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
     c1 = KeyboardButton("O'zbekchaga")
     c2 = KeyboardButton('На русский')
-    c3 = KeyboardButton("Ўзбекчага")
+    c3 = KeyboardButton("Qoraqolpoqchaga")
     kb_client_change = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(c1).add(c2).add(c3)
 
     if user.lang == 'uz':
-        await bot.send_message(message.from_user.id, 'Xurmatli murojaatchi, iltimos intefeys tilini tanlang!',
+        await bot.send_message(message.from_user.id, 'Hurmatli fuqaro, iltimos interfeys tilini tanlang!',
                                reply_markup=kb_client_change)
     if user.lang == 'ru':
-        await bot.send_message(message.from_user.id, 'Уважаемый заявитель, выберите язык интерфейса!',
+        await bot.send_message(message.from_user.id, 'Уважаемый гражданин, пожалуйста выберите язык интерфейса!',
                                reply_markup=kb_client_change)
     if user.lang == 'uz_kir':
         await bot.send_message(message.from_user.id, 'Хурматли мурожаатчи, илттимос интерфейс тилини танланг!',
@@ -935,21 +936,21 @@ async def change_lang(message: types.Message):
             KeyboardButton('Настройки'))
 
         await bot.send_message(message.from_user.id, 'Язык изменен', reply_markup=user_kb)
-    if message.text == "Ўзбекчага":
+    if message.text == "Qoraqolpoqchaga":
         user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
         user = user.scalar()
         user.lang = 'uz_kir'
         await db.session.commit()
-        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Менинг мурожаатларим')
-                                                                ).add(KeyboardButton('Мурожаатингизни қолдиринг')
-                                                                      ).add(KeyboardButton("Тилни ўзгартириш")).add(
-            KeyboardButton('Созламалар'))
+        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Meniń múrájatlarım')
+                                                                ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń')
+                                                                      ).add(KeyboardButton("Tildi ózgertiw")).add(
+            KeyboardButton('Sazlamalar'))
         await bot.send_message(message.from_user.id, 'Тил ўзгартирилди', reply_markup=user_kb)
 
 
 @dp.message_handler(Text(equals='Sozlamalar'))
 @dp.message_handler(Text(equals='Настройки'))
-@dp.message_handler(Text(equals='Созламалар'))
+@dp.message_handler(Text(equals='Sazlamalar'))
 async def settings(message: types.Message):
     uz_sets = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
         KeyboardButton(_("Ma'lumotlarni ko'rish")))
@@ -959,7 +960,7 @@ async def settings(message: types.Message):
 
 def handlers_settings_changes():
     ls = ["Ism sharifini o'zgartirish", "Telefonni o'zgartirish", "Изменить имя", "Изменить телефон",
-          'Исм шарифини ўзгартириш', "Телефонни ўзгартириш"]
+          'Atı familiasın ózgertiw', "Telefon nomerin ózgertiw"]
     for x in ls:
         dp.register_message_handler(change_settings, Text(equals=x))
 
@@ -1044,7 +1045,7 @@ async def changePhone(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="Ma'lumotlarni ko'rish"))
 @dp.message_handler(Text(equals="Посмотреть данные"))
-@dp.message_handler(Text(equals="Малумотларини кўриш"))
+@dp.message_handler(Text(equals="Maǵlıwmatlardı kóriw"))
 async def sendMyName(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(
@@ -1076,7 +1077,7 @@ async def sendMyName(message: types.Message):
 
 @dp.message_handler(Text(equals="Hududni o'zgartirish"))
 @dp.message_handler(Text(equals="Худудни ўзгартириш"))
-@dp.message_handler(Text(equals="Поменять область"))
+@dp.message_handler(Text(equals="Aymaqtı ózgertiw"))
 async def change_viloyat_button(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
@@ -1114,19 +1115,19 @@ async def get_murojat(message: types.Message):
 
         message = f'''№{app.id}
 Sizning murojaatingiz: {app.application}
-Vremya: {app.created_at.strftime("%Y.%m.%d")}
+{app.created_at.strftime("%Y.%m.%d")}
             '''
     elif user.lang == 'ru':
 
         message = f'''№{app.id}
 Ваше обращение: {app.application}
-Vremya: {app.created_at.strftime("%Y.%m.%d")}
+{app.created_at.strftime("%Y.%m.%d")}
             '''
     else:
 
         message = f'''№{app.id}
 Сизнинг мурожатингиз: {app.application}
-Vremya: {app.created_at.strftime("%Y.%m.%d")}
+{app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(_('Mening murojaatlarim'))
@@ -1259,4 +1260,4 @@ async def change_mfy(message: types.Message, state: FSMContext):
             KeyboardButton(_('Sozlamalar'))))
 
 
-'ss'
+
