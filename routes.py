@@ -75,7 +75,7 @@ async def commands_start(message: types.Message):
 
         lang_ru = 'Уважаемый гражданин, пожалуйста выберите язык интерфейса!'
         lang_uz = "Hurmatli fuqaro, iltimos interfeys tilini tanlang!"
-        lang_kir = 'Хурматли мурожаатчи, илттимос интерфейс тилини танланг!'
+        lang_kir = 'Húrmetli puxara, iltimas interfeys tilin tańlań!'
 
         multilang = lang_uz + '\n' + lang_ru + '\n' + lang_kir
         await bot.send_message(user_id, multitext, reply_markup=kb_client)
@@ -246,7 +246,7 @@ async def load_name(message: types.Message, state: FSMContext):
     else:
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Оркагя'))
+                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Artqa'))
 
     await Regist.next()
 
@@ -256,7 +256,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
     step = 3
     print(message.text)
 
-    if message.text == 'Оркагя':
+    if message.text == 'Artqa':
         print('here')
 
         text = await take_text('uz_kir', 1, message.from_user.id, message)
@@ -284,7 +284,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
         kb = await get_viloyats(data['lang'])
         text = await take_text(data['lang'], step, message.from_user.id, message)
         if data['lang'] == 'uz_kir':
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
         elif data['lang'] == 'uz':
             await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
         else:
@@ -353,13 +353,13 @@ async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
 async def load_viloyat(message: types.Message, state: FSMContext):
     step = 4
 
-    if message.text == 'Оркагя':
+    if message.text == 'Artqa':
         print('here')
 
         text = await take_text('uz_kir', 2, message.from_user.id, message)
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Оркагя'))
+                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Artqa'))
         await Regist.previous()
         return
     elif message.text == 'Orqaga':
@@ -384,7 +384,7 @@ async def load_viloyat(message: types.Message, state: FSMContext):
     text = await take_text(data['lang'], step, message.from_user.id, message)
     kb = await generate_tuman_kb(message.text, data['lang'])
     if data['lang'] == 'uz_kir':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
     elif data['lang'] == 'uz':
         await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
     else:
@@ -395,10 +395,10 @@ async def load_viloyat(message: types.Message, state: FSMContext):
 async def load_tuman(message: types.Message, state: FSMContext):
     step = 5
 
-    if message.text == 'Оркагя':
+    if message.text == 'Artqa':
         text = await take_text('uz_kir', 3, message.from_user.id, message)
         kb = await get_viloyats('uz_kir')
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
         await Regist.previous()
         return
     elif message.text == 'Orqaga':
@@ -421,7 +421,7 @@ async def load_tuman(message: types.Message, state: FSMContext):
     text = await take_text(data['lang'], step, message.from_user.id, message)
     kb = await generate_mahalla_kb(message.text, data['lang'])
     if data['lang'] == 'uz_kir':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
     elif data['lang'] == 'uz':
         await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
     else:
@@ -434,10 +434,10 @@ async def load_mfy(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data['mfy'] = message.text
-        if message.text == 'Оркагя':
+        if message.text == 'Artqa':
             text = await take_text('uz_kir', 4, message.from_user.id, message)
             kb = await generate_tuman_kb(data['viloyat'], 'uz_kir')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
             await Regist.previous()
             return
         elif message.text == 'Orqaga':
@@ -470,7 +470,7 @@ async def load_mfy(message: types.Message, state: FSMContext):
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkek'),
                                                                                           KeyboardButton('Hayal')).add(
-                                   'Оркагя'))
+                                   'Artqa'))
 
 
 @dp.message_handler(state=Regist.sex)
@@ -479,10 +479,10 @@ async def load_sex(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data['sex'] = message.text
-        if message.text == 'Оркагя':
+        if message.text == 'Artqa':
             text = await take_text('uz_kir', 5, message.from_user.id, message)
             kb = await generate_mahalla_kb(data['tuman'], 'uz_kir')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Оркагя'))
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
             await Regist.previous()
             return
         elif message.text == 'Orqaga':
@@ -506,7 +506,7 @@ async def load_sex(message: types.Message, state: FSMContext):
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
     elif data['lang'] == 'uz_kir':
         await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Оркагя'))
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
     else:
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
@@ -529,7 +529,7 @@ async def load_years(message: types.Message, state: FSMContext):
                                        reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
             elif data['lang'] == 'uz_kir':
                 await bot.send_message(message.from_user.id, text,
-                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Оркагя'))
+                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
             else:
                 await bot.send_message(message.from_user.id, text,
                                        reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
@@ -553,12 +553,12 @@ async def load_years(message: types.Message, state: FSMContext):
                     await state.finish()
     except Exception as e:
         print(e)
-        if message.text == 'Оркагя':
+        if message.text == 'Artqa':
             text = await take_text('uz_kir', 6, message.from_user.id, message)
             await bot.send_message(message.from_user.id, text,
                                    reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                       KeyboardButton('Эркак'),
-                                       KeyboardButton('Аёл')).add('Оркагя'))
+                                       KeyboardButton('Erkek'),
+                                       KeyboardButton('Hayal')).add('Artqa'))
             await Regist.previous()
             return
         elif message.text == 'Orqaga':
@@ -633,10 +633,10 @@ async def get_orders(user_id):
 async def load_ad(message: types.Message, state: FSMContext):
     step = 9
 
-    if message.text == 'Оркагя':
+    if message.text == 'Artqa':
         text = await take_text('uz_kir', 7, message.from_user.id, message)
         await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Оркагя'))
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
         await Regist.previous()
         return
     elif message.text == 'Orqaga':
@@ -909,7 +909,7 @@ async def select_lang(message: types.Message):
         await bot.send_message(message.from_user.id, 'Уважаемый гражданин, пожалуйста выберите язык интерфейса!',
                                reply_markup=kb_client_change)
     if user.lang == 'uz_kir':
-        await bot.send_message(message.from_user.id, 'Хурматли мурожаатчи, илттимос интерфейс тилини танланг!',
+        await bot.send_message(message.from_user.id, 'Húrmetli puxara, iltimas interfeys tilin tańlań!',
                                reply_markup=kb_client_change)
 
 
@@ -945,7 +945,7 @@ async def change_lang(message: types.Message):
                                                                 ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń')
                                                                       ).add(KeyboardButton("Tildi ózgertiw")).add(
             KeyboardButton('Sazlamalar'))
-        await bot.send_message(message.from_user.id, 'Тил ўзгартирилди', reply_markup=user_kb)
+        await bot.send_message(message.from_user.id, 'Til ózgertildi', reply_markup=user_kb)
 
 
 @dp.message_handler(Text(equals='Sozlamalar'))
@@ -1063,7 +1063,7 @@ async def sendMyName(message: types.Message):
 
     if user.lang == 'uz':
         await bot.send_message(user_id,
-                               f'Sizning FISh {user.fio}, sizning telefon raqamingiz: {user.phone}, {user.viloyati.name_uz}, {tuman.name_uz2}',
+                               f'Sizdiń FAA {user.fio}, Sizdiń telefon nomerińiz: {user.phone}, {user.viloyati.name_uz}, {tuman.name_uz2}',
                                reply_markup=sets_change)
     elif user.lang == 'ru':
         await bot.send_message(user_id,
@@ -1126,7 +1126,7 @@ Sizning murojaatingiz: {app.application}
     else:
 
         message = f'''№{app.id}
-Сизнинг мурожатингиз: {app.application}
+Sizdiń múrájatindiń: {app.application}
 {app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
