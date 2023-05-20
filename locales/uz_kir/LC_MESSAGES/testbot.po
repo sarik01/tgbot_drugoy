@@ -1,4 +1,4 @@
-# Uzbek translations for PROJECT.
+# English translations for PROJECT.
 # Copyright (C) 2023 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
@@ -7,92 +7,117 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-28 18:33-0700\n"
-"PO-Revision-Date: 2023-04-16 12:51-0700\n"
+"POT-Creation-Date: 2023-05-20 15:21-0700\n"
+"PO-Revision-Date: 2023-05-20 14:34-0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: uz\n"
-"Language-Team: uz <LL@li.org>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: routes.py:56 routes.py:504 routes.py:512 routes.py:520 routes.py:594
-#: routes.py:791 routes.py:802 routes.py:817 routes.py:828 routes.py:924
-#: routes.py:941 routes.py:967 routes.py:1013 routes.py:1047
+#: routes.py:56 routes.py:530 routes.py:558 routes.py:566 routes.py:574
+#: routes.py:648 routes.py:845 routes.py:856 routes.py:871 routes.py:882
+#: routes.py:975 routes.py:992 routes.py:1018 routes.py:1065 routes.py:1099
 msgid "Mening murojaatlarim"
-msgstr "Meniń múrájatlarım"
+msgstr "Meniń múrájatlarım  "
 
-#: routes.py:57 routes.py:505 routes.py:513 routes.py:521 routes.py:595
-#: routes.py:792 routes.py:803 routes.py:818 routes.py:829 routes.py:925
-#: routes.py:942 routes.py:968 routes.py:1014 routes.py:1048
+#: routes.py:57 routes.py:531 routes.py:559 routes.py:567 routes.py:575
+#: routes.py:649 routes.py:846 routes.py:857 routes.py:872 routes.py:883
+#: routes.py:976 routes.py:993 routes.py:1019 routes.py:1066 routes.py:1100
 msgid "Murojaatingizni qoldiring"
 msgstr "Múrájatlarıńıstı qaldıriń"
 
-#: routes.py:58 routes.py:506 routes.py:514 routes.py:522 routes.py:596
-#: routes.py:793 routes.py:804 routes.py:819 routes.py:830 routes.py:926
-#: routes.py:943 routes.py:969 routes.py:1015 routes.py:1049
+#: routes.py:58 routes.py:532 routes.py:560 routes.py:568 routes.py:576
+#: routes.py:650 routes.py:847 routes.py:858 routes.py:873 routes.py:884
+#: routes.py:977 routes.py:994 routes.py:1020 routes.py:1067 routes.py:1101
 msgid "Tilni o'zgartirish"
 msgstr "Tildi ózgertiw"
 
-#: routes.py:59 routes.py:507 routes.py:515 routes.py:523 routes.py:597
-#: routes.py:746 routes.py:794 routes.py:805 routes.py:820 routes.py:831
-#: routes.py:927 routes.py:944 routes.py:970 routes.py:1016 routes.py:1050
+#: routes.py:59 routes.py:533 routes.py:561 routes.py:569 routes.py:577
+#: routes.py:651 routes.py:800 routes.py:848 routes.py:859 routes.py:874
+#: routes.py:885 routes.py:978 routes.py:995 routes.py:1021 routes.py:1068
+#: routes.py:1102
 msgid "Sozlamalar"
 msgstr "Sazlamalar"
 
-#: routes.py:135 routes.py:169 routes.py:203 routes.py:452 routes.py:592
-#: routes.py:673 routes.py:773 routes.py:789 routes.py:790 routes.py:815
-#: routes.py:816 routes.py:850 routes.py:874 routes.py:937 routes.py:939
-#: routes.py:954 routes.py:964 routes.py:966 routes.py:993 routes.py:1010
-#: routes.py:1012
+#: routes.py:136 routes.py:170 routes.py:175 routes.py:204 routes.py:222
+#: routes.py:224 routes.py:246 routes.py:522 routes.py:646 routes.py:727
+#: routes.py:827 routes.py:843 routes.py:844 routes.py:869 routes.py:870
+#: routes.py:904 routes.py:928 routes.py:988 routes.py:990 routes.py:1005
+#: routes.py:1015 routes.py:1017 routes.py:1044 routes.py:1062 routes.py:1064
 msgid "Bekor qilish"
 msgstr "Biykar etiw"
 
-#: routes.py:359
+#: routes.py:228 routes.py:325
+msgid "Telefon raqamni jo'natish"
+msgstr "Telefon nomerin jiberiw"
+
+#: routes.py:232 routes.py:242 routes.py:256 routes.py:321 routes.py:326
+#: routes.py:336 routes.py:344 routes.py:347 routes.py:357 routes.py:367
+#: routes.py:370 routes.py:383 routes.py:393 routes.py:396 routes.py:406
+#: routes.py:424 routes.py:438 routes.py:444 routes.py:506 routes.py:510
+msgid "Orqaga"
+msgstr "Artqa"
+
+#: routes.py:381 routes.py:442
 msgid "Erkak"
 msgstr "Erkek"
 
-#: routes.py:360
+#: routes.py:382 routes.py:443
 msgid "Ayol"
 msgstr "Hayal"
 
-#: routes.py:673
+#: routes.py:430
+msgid ""
+"Mazkur bot yoshlardan taklif va murojaatlarni qabul qilishga "
+"mo‘ljallangan. Sizga @agromurojaatbot dan foydalanish taklif etiladi."
+msgstr "Сизга @agromurojaatbot дан фойдалиниш таклиф этилади."
+
+#: routes.py:528
+msgid "Asosiy menyu"
+msgstr "Tiykarǵı menyu"
+
+#: routes.py:727
 msgid "Murojaati nomerni tanlang!"
 msgstr "Múrájat nomerin tańlań!"
 
-#: routes.py:744
+#: routes.py:798
 msgid "Ma'lumotlarni ko'rish"
 msgstr "Maǵlıwmatlardı kóriw"
 
-#: routes.py:759
+#: routes.py:813
 msgid "Ism sharifini o`zgartirish"
 msgstr "Atı familiasın ózgertiw"
 
-#: routes.py:761
+#: routes.py:815
 msgid "Telefonni o`zgartirish"
 msgstr "Telefon nomerin ózgertiw"
 
-#: routes.py:776 routes.py:778
+#: routes.py:830 routes.py:832
 msgid "Kontaktni yuboring"
 msgstr "Kontakt jiberiw"
 
-#: routes.py:848
+#: routes.py:902
 msgid "Ism sharifini o'zgartirish"
 msgstr "Atı familiasın ózgertiw"
 
-#: routes.py:848
+#: routes.py:902
 msgid "Telefonni o'zgartirish"
 msgstr "Telefon nomerin ózgertiw"
 
-#: routes.py:849
+#: routes.py:903
 msgid "Hududni o'zgartirish"
 msgstr "Aymaqtı ózgertiw"
 
-#: routes.py:874
+#: routes.py:928
 msgid "Tugmasini bosing"
 msgstr "Túymesin basıń"
+
+#~ msgid "Telefon raqamni jo'natish!"
+#~ msgstr "Telefon nomerin jiberiw"
 
 #~ msgid "Asosiy menyu"
 #~ msgstr "Tiykarǵı menyu"
@@ -102,4 +127,3 @@ msgstr "Túymesin basıń"
 
 #~ msgid "Tilni o`zgartirish"
 #~ msgstr "Тилни ўзгартириш"
-

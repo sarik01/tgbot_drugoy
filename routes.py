@@ -17,7 +17,6 @@ b1 = KeyboardButton("O'zbekcha")
 b2 = KeyboardButton('Русский')
 b3 = KeyboardButton("Qoraqalpoqcha")
 
-
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_client.add(b1).add(b2).add(b3)
 
@@ -173,7 +172,7 @@ async def murojat_handlers_ru(message: types.Message, state: FSMContext):
     else:
         text = await take_text('ru', step, message.from_user.id, message)
         await bot.send_message(user_id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Отмена')))
+            KeyboardButton(_('Bekor qilish', locale=status_lang))))
         await Regist.name.set()
 
 
@@ -220,33 +219,17 @@ async def load_name(message: types.Message, state: FSMContext):
         data['lang'] = status_lang
         object = tuple(data.values())
 
-    if object[0] == 'Bekor qilish':
+    if object[0] == _('Bekor qilish', locale=data['lang']):
         await state.finish()
-        await bot.send_message(message.from_user.id, 'Bekor qilish', reply_markup=kb_client)
-        return
-    elif object[0] == 'Отмена':
-        await state.finish()
-        await bot.send_message(message.from_user.id, 'Отмена', reply_markup=kb_client)
-        return
-    elif object[0] == 'Biykar etiw':
-        await state.finish()
-        await bot.send_message(message.from_user.id, 'Бекор қилиш', reply_markup=kb_client)
+        await bot.send_message(message.from_user.id, _('Bekor qilish', locale=data['lang']), reply_markup=kb_client)
         return
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
-
-    if data['lang'] == 'ru':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Отправить номер телефона', request_contact=True)).add('Назад'))
-    elif data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton("Telefon raqamni jo'natish", request_contact=True)).add('Orqaga'))
-    else:
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Telefon nomerin jiberiw', request_contact=True)).add('Artqa'))
+    req_cont = _("Telefon raqamni jo'natish", locale=data['lang'])
+    print(req_cont)
+    await bot.send_message(message.from_user.id, text,
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                               KeyboardButton(req_cont, request_contact=True)).add(_('Orqaga', locale=data['lang'])))
 
     await Regist.next()
 
@@ -254,41 +237,23 @@ async def load_name(message: types.Message, state: FSMContext):
 @dp.message_handler(content_types=types.ContentType.ANY, state=Regist.phone)
 async def load_phone(message: types.Message, state: FSMContext, editMessageReplyMarkup=None):
     step = 3
-    print(message.text)
-
-    if message.text == 'Artqa':
-        print('here')
-
-        text = await take_text('uz_kir', 1, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Biykar etiw')))
-        await Regist.previous()
-        return
-    elif message.text == 'Orqaga':
-        text = await take_text('uz', 1, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Bekor qilish')))
-        await Regist.previous()
-        return
-    elif message.text == 'Назад':
-        text = await take_text('ru', 1, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton('Отмена')))
-        await Regist.previous()
-        return
 
     async with state.proxy() as data:
+        if message.text == _('Orqaga', locale=data['lang']):
+            text = await take_text(data['lang'], 1, message.from_user.id, message)
+            await bot.send_message(message.from_user.id, text,
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                       KeyboardButton(_('Bekor qilish', locale=data['lang']))))
+            await Regist.previous()
+            return
+
         data['phone'] = message.contact.phone_number
 
         await Regist.next()
         kb = await get_viloyats(data['lang'])
         text = await take_text(data['lang'], step, message.from_user.id, message)
-        if data['lang'] == 'uz_kir':
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
-        elif data['lang'] == 'uz':
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
-        else:
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
+
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
 
 
 async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
@@ -352,80 +317,44 @@ async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
 @dp.message_handler(state=Regist.viloyat)
 async def load_viloyat(message: types.Message, state: FSMContext):
     step = 4
-
-    if message.text == 'Artqa':
-        print('here')
-
-        text = await take_text('uz_kir', 2, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Telefon nomerin jiberiw', request_contact=True)).add('Artqa'))
-        await Regist.previous()
-        return
-    elif message.text == 'Orqaga':
-        text = await take_text('uz', 2, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton("Telefon raqamni jo'natish", request_contact=True)).add('Orqaga'))
-        await Regist.previous()
-        return
-    elif message.text == 'Назад':
-        text = await take_text('ru', 2, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Отправить номер телефона', request_contact=True)).add('Назад'))
-        await Regist.previous()
-        return
-
     async with state.proxy() as data:
+        if message.text == _('Orqaga', locale=data['lang']):
+            text = await take_text(data['lang'], 2, message.from_user.id, message)
+            await bot.send_message(message.from_user.id, text,
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                       KeyboardButton(_("Telefon raqamni jo'natish", locale=data['lang']),
+                                                      request_contact=True)).add(_('Orqaga', locale=data['lang'])))
+            await Regist.previous()
+            return
+
         data['viloyat'] = message.text
         await Regist.next()
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
     kb = await generate_tuman_kb(message.text, data['lang'])
-    if data['lang'] == 'uz_kir':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
-    elif data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
-    else:
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
+
+    await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
 
 
 @dp.message_handler(state=Regist.tuman)
 async def load_tuman(message: types.Message, state: FSMContext):
     step = 5
 
-    if message.text == 'Artqa':
-        text = await take_text('uz_kir', 3, message.from_user.id, message)
-        kb = await get_viloyats('uz_kir')
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
-        await Regist.previous()
-        return
-    elif message.text == 'Orqaga':
-        text = await take_text('uz', 3, message.from_user.id, message)
-        kb = await get_viloyats('uz')
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
-        await Regist.previous()
-        return
-    elif message.text == 'Назад':
-        text = await take_text('ru', 3, message.from_user.id, message)
-        kb = await get_viloyats('ru')
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
-        await Regist.previous()
-        return
-
     async with state.proxy() as data:
+        if message.text == _('Orqaga', locale=data['lang']):
+            text = await take_text(data['lang'], 3, message.from_user.id, message)
+            kb = await get_viloyats(data['lang'])
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
+            await Regist.previous()
+            return
+
         data['tuman'] = message.text
         await Regist.next()
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
     kb = await generate_mahalla_kb(message.text, data['lang'])
-    if data['lang'] == 'uz_kir':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
-    elif data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
-    else:
-        await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
+
+    await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
 
 
 @dp.message_handler(state=Regist.mfy)
@@ -434,43 +363,24 @@ async def load_mfy(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data['mfy'] = message.text
-        if message.text == 'Artqa':
-            text = await take_text('uz_kir', 4, message.from_user.id, message)
-            kb = await generate_tuman_kb(data['viloyat'], 'uz_kir')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
+
+        if message.text == _('Orqaga', locale=data['lang']):
+            text = await take_text(data['lang'], 4, message.from_user.id, message)
+            kb = await generate_tuman_kb(data['viloyat'], data['lang'])
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
             await Regist.previous()
             return
-        elif message.text == 'Orqaga':
-            text = await take_text('uz', 4, message.from_user.id, message)
-            kb = await generate_tuman_kb(data['viloyat'], 'uz')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
-            await Regist.previous()
-            return
-        elif message.text == 'Назад':
-            text = await take_text('ru', 4, message.from_user.id, message)
-            kb = await generate_tuman_kb(data['viloyat'], 'ru')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
-            await Regist.previous()
-            return
+
         else:
             await Regist.next()
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
-    if data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkak'),
-                                                                                          KeyboardButton('Ayol')).add(
-                                   'Orqaga'))
-    elif data['lang'] == 'ru':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Мужчина'),
-                                                                                          KeyboardButton(
-                                                                                              'Женщина')).add('Назад'))
-    else:
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Erkek'),
-                                                                                          KeyboardButton('Hayal')).add(
-                                   'Artqa'))
+
+    await bot.send_message(message.from_user.id, text,
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                               KeyboardButton(_('Erkak', locale=data['lang'])),
+                               KeyboardButton(_('Ayol', locale=data['lang']))).add(
+                               _('Orqaga', locale=data['lang'])))
 
 
 @dp.message_handler(state=Regist.sex)
@@ -479,37 +389,21 @@ async def load_sex(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data['sex'] = message.text
-        if message.text == 'Artqa':
-            text = await take_text('uz_kir', 5, message.from_user.id, message)
-            kb = await generate_mahalla_kb(data['tuman'], 'uz_kir')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Artqa'))
-            await Regist.previous()
-            return
-        elif message.text == 'Orqaga':
+
+        if message.text == _('Orqaga', locale=data['lang']):
             text = await take_text('uz', 5, message.from_user.id, message)
-            kb = await generate_mahalla_kb(data['tuman'], 'uz')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Orqaga'))
+            kb = await generate_mahalla_kb(data['tuman'], data['lang'])
+            await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
             await Regist.previous()
             return
-        elif message.text == 'Назад':
-            text = await take_text('ru', 5, message.from_user.id, message)
-            kb = await generate_mahalla_kb(data['tuman'], 'ru')
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add('Назад'))
-            await Regist.previous()
-            return
+
         else:
             await Regist.next()
 
     text = await take_text(data['lang'], step, message.from_user.id, message)
-    if data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
-    elif data['lang'] == 'uz_kir':
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
-    else:
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
+
+    await bot.send_message(message.from_user.id, text,
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(_('Orqaga', locale=data['lang'])))
 
 
 @dp.message_handler(state=Regist.years)  # regexp=r"^(\d+)$"
@@ -524,62 +418,36 @@ async def load_years(message: types.Message, state: FSMContext):
                 await Regist.next()
 
             text = await take_text(data['lang'], step, message.from_user.id, message)
-            if data['lang'] == 'uz':
-                await bot.send_message(message.from_user.id, text,
-                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
-            elif data['lang'] == 'uz_kir':
-                await bot.send_message(message.from_user.id, text,
-                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
-            else:
-                await bot.send_message(message.from_user.id, text,
-                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
+
+            await bot.send_message(message.from_user.id, text,
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                       _('Orqaga', locale=data['lang'])))
+
         else:
             async with state.proxy() as data:
-                if data['lang'] == 'uz':
-                    await bot.send_message(message.from_user.id,
-                                           'Mazkur bot yoshlardan taklif va murojaatlarni qabul qilishga mo‘ljallangan. Sizga @agromurojaatbot dan foydalanish taklif etiladi.',
-                                           reply_markup=kb_client)
 
-                    await state.finish()
-                elif data['lang'] == 'ru':
-                    await bot.send_message(message.from_user.id,
-                                           'Настоящий бот создан для приема предложений и обращений от молодежи. Вам предлагается перейти на @agromurojaatbot',
-                                           reply_markup=kb_client)
-                    await state.finish()
-                else:
-                    await bot.send_message(message.from_user.id,
-                                           'Мазкур бор ёшлардан таклиф ва мурожаатларни қабул қилишга мўлжалланган. Сизга @agromurojaatbot дан фойдалиниш таклиф этилади.',
-                                           reply_markup=kb_client)
-                    await state.finish()
+                await bot.send_message(message.from_user.id,
+                                       _('Mazkur bot yoshlardan taklif va murojaatlarni qabul qilishga mo‘ljallangan. Sizga @agromurojaatbot dan foydalanish taklif etiladi.',
+                                         locale=data['lang']),
+                                       reply_markup=kb_client)
+
+                await state.finish()
     except Exception as e:
         print(e)
-        if message.text == 'Artqa':
-            text = await take_text('uz_kir', 6, message.from_user.id, message)
-            await bot.send_message(message.from_user.id, text,
-                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                       KeyboardButton('Erkek'),
-                                       KeyboardButton('Hayal')).add('Artqa'))
-            await Regist.previous()
-            return
-        elif message.text == 'Orqaga':
-            text = await take_text('uz', 6, message.from_user.id, message)
-            await bot.send_message(message.from_user.id, text,
-                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                       KeyboardButton('Erkak'),
-                                       KeyboardButton('Ayol')).add('Orqaga'))
-            await Regist.previous()
-            return
-        elif message.text == 'Назад':
-            text = await take_text('ru', 6, message.from_user.id, message)
-            await bot.send_message(message.from_user.id, text,
-                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                       KeyboardButton('Мужчина'),
-                                       KeyboardButton('Женщина')).add('Назад'))
-            await Regist.previous()
-            return
-        else:
-            await bot.send_message(message.from_user.id, '15-35')
-            return
+        async with state.proxy() as data:
+            if message.text == _('Orqaga', locale=data['lang']):
+                text = await take_text(data['lang'], 6, message.from_user.id, message)
+                await bot.send_message(message.from_user.id, text,
+                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                           KeyboardButton(_('Erkak', locale=data['lang'])),
+                                           KeyboardButton(_('Ayol', locale=data['lang']))).add(
+                                           _('Orqaga', locale=data['lang'])))
+                await Regist.previous()
+                return
+
+            else:
+                await bot.send_message(message.from_user.id, '15-35')
+                return
 
 
 async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
@@ -633,26 +501,16 @@ async def get_orders(user_id):
 async def load_ad(message: types.Message, state: FSMContext):
     step = 9
 
-    if message.text == 'Artqa':
-        text = await take_text('uz_kir', 7, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Artqa'))
-        await Regist.previous()
-        return
-    elif message.text == 'Orqaga':
-        text = await take_text('uz', 7, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Orqaga'))
-        await Regist.previous()
-        return
-    elif message.text == 'Назад':
-        text = await take_text('ru', 7, message.from_user.id, message)
-        await bot.send_message(message.from_user.id, text,
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add('Назад'))
-        await Regist.previous()
-        return
-
     async with state.proxy() as data:
+
+        if message.text == _('Orqaga', locale=data['lang']):
+            text = await take_text(data['lang'], 7, message.from_user.id, message)
+            await bot.send_message(message.from_user.id, text,
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                       _('Orqaga', locale=data['lang'])))
+            await Regist.previous()
+            return
+
         data['ad'] = message.text
         data['user_id'] = message.from_user.id
 
@@ -667,27 +525,12 @@ async def load_ad(message: types.Message, state: FSMContext):
     id = await sql_read2(message, data['lang'], step)
     dp.register_message_handler(get_murojat, Text(equals=f'№{id}'), state=None)
 
-    if data['lang'] == 'uz':
-        await bot.send_message(message.from_user.id, 'Asosiy menyu',
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                   KeyboardButton('Mening murojaatlarim')
-                               ).add(KeyboardButton('Murojaatingizni qoldiring')
-                                     ).add(KeyboardButton("Tilni o'zgartirish")).add(
-                                   KeyboardButton('Sozlamalar')))
-    elif data['lang'] == 'ru':
-        await bot.send_message(message.from_user.id, 'Главное меню',
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                   KeyboardButton('Мои обращения')
-                               ).add(KeyboardButton('Оставьте обращение')
-                                     ).add(KeyboardButton("Поменять язык")).add(
-                                   KeyboardButton('Настройки')))
-    else:
-        await bot.send_message(message.from_user.id, 'Tiykarǵı menyu',
-                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                   KeyboardButton('Meniń múrájatlarım')
-                               ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń')
-                                     ).add(KeyboardButton("Tildi ózgertiw")).add(
-                                   KeyboardButton('Sazlamalar')))
+    await bot.send_message(message.from_user.id, _('Asosiy menyu', locale=data['lang']),
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                               KeyboardButton(_('Mening murojaatlarim', locale=data['lang']))
+                           ).add(KeyboardButton(_('Murojaatingizni qoldiring', locale=data['lang']))
+                                 ).add(KeyboardButton(_("Tilni o'zgartirish", locale=data['lang']))).add(
+                               KeyboardButton(_('Sozlamalar', locale=data['lang']))))
 
 
 async def sql_read2(message, lang, step):
@@ -709,7 +552,6 @@ async def createUser(state, user_id):
     user = user.scalar()
     async with state.proxy() as data:
         object = tuple(data.values())
-        print(object)
 
         if data['ad'] == 'Biykar etiw' or object[0] == 'Biykar etiw':
             await bot.send_message(user_id, 'Biykar etiw', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
@@ -1260,10 +1102,8 @@ async def change_mfy(message: types.Message, state: FSMContext):
             KeyboardButton(_('Sozlamalar'))))
 
 
-
 @dp.message_handler(commands='logout')
-async def logout(message : types.Message):
-
+async def logout(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=user_id))
     user = user.scalar()
