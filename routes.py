@@ -359,7 +359,7 @@ async def load_viloyat(message: types.Message, state: FSMContext):
         text = await take_text('uz_kir', 2, message.from_user.id, message)
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Artqa'))
+                                   KeyboardButton('Telefon nomerin jiberiw', request_contact=True)).add('Artqa'))
         await Regist.previous()
         return
     elif message.text == 'Orqaga':
