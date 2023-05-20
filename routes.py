@@ -1063,7 +1063,7 @@ async def sendMyName(message: types.Message):
 
     if user.lang == 'uz':
         await bot.send_message(user_id,
-                               f'Sizdiń FAA {user.fio}, Sizdiń telefon nomerińiz: {user.phone}, {user.viloyati.name_uz}, {tuman.name_uz2}',
+                               f'Sizning FISH {user.fio}, Sizning telefon raqamingiz: {user.phone}, {user.viloyati.name_uz}, {tuman.name_uz2}',
                                reply_markup=sets_change)
     elif user.lang == 'ru':
         await bot.send_message(user_id,
@@ -1071,7 +1071,7 @@ async def sendMyName(message: types.Message):
                                reply_markup=sets_change)
     else:
         await bot.send_message(user_id,
-                               f'Сизнинг ФИШ {user.fio}, сизнинг телефон рақамингиз: {user.phone}, {user.viloyati.name_uz_kir}, {tuman.name_uz_kir2}',
+                               f'Sizdiń FAA {user.fio}, Sizdiń telefon nomerińiz: {user.phone}, {user.viloyati.name_uz_kir}, {tuman.name_uz_kir2}',
                                reply_markup=sets_change)
 
 
@@ -1126,7 +1126,7 @@ Sizning murojaatingiz: {app.application}
     else:
 
         message = f'''№{app.id}
-Sizdiń múrájatindiń: {app.application}
+Sizdiń múrájatingiz: {app.application}
 {app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
@@ -1261,3 +1261,18 @@ async def change_mfy(message: types.Message, state: FSMContext):
 
 
 
+@dp.message_handler(commands='logout')
+async def logout(message : types.Message):
+
+    user_id = message.from_user.id
+    user = await db.session.execute(select(db.User).filter_by(tg_user_id=user_id))
+    user = user.scalar()
+
+    if user:
+
+        await db.session.delete(user)
+        await db.session.commit()
+
+        await bot.send_message(user_id, 'you has been deleted!', reply_markup=kb_client)
+    else:
+        await bot.send_message(user_id, 'you are not registered!', reply_markup=kb_client)

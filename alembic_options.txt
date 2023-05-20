@@ -1,0 +1,7 @@
+alembic init
+
+
+alembic check
+
+
+alembic revision --autogenerate -m "name of updates"
