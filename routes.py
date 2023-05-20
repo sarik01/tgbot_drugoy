@@ -1,11 +1,10 @@
 from email.mime.text import MIMEText
-from pprint import pprint
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -918,7 +917,7 @@ async def sendMyName(message: types.Message):
 
 
 @dp.message_handler(Text(equals="Hududni o'zgartirish"))
-@dp.message_handler(Text(equals="Худудни ўзгартириш"))
+@dp.message_handler(Text(equals="Поменять область"))
 @dp.message_handler(Text(equals="Aymaqtı ózgertiw"))
 async def change_viloyat_button(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
@@ -1084,6 +1083,7 @@ async def change_mfy(message: types.Message, state: FSMContext):
             cat = await db.session.execute(select(db.Viloyat).filter_by(name_uz_kir=object[0]))
             tuman = await db.session.execute(select(db.Tuman).filter_by(name_uz_kir2=object[1]))
             mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz_kir=new_mfy))
+
         cat = cat.scalar()
         tuman = tuman.scalar()
         mfy = mfy.scalar()
