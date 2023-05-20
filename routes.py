@@ -246,7 +246,7 @@ async def load_name(message: types.Message, state: FSMContext):
     else:
         await bot.send_message(message.from_user.id, text,
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                   KeyboardButton('Телефон рақамни жўнатиш', request_contact=True)).add('Artqa'))
+                                   KeyboardButton('Telefon nomerin jiberiw', request_contact=True)).add('Artqa'))
 
     await Regist.next()
 
