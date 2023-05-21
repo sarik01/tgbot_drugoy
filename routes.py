@@ -61,7 +61,7 @@ async def commands_start(message: types.Message):
     else:
         print(user_id)
         print('No user')
-        text = await db.session.execute(select(db.Text.greeting).filter_by(lang='uz_kir'))
+        text = await db.session.execute(select(db.Text.greeting).filter_by(lang='uz'))
         text_ru = await db.session.execute(select(db.Text.greeting).filter_by(lang='ru'))
         text_kir = await db.session.execute(select(db.Text.greeting).filter_by(lang='uz_kir'))
 
@@ -256,32 +256,36 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
 
 
 async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
-    if lang == 'uz':
-        viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_uz=viloyat))
-        viloyat_m = viloyat_m.scalar()
-        tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
-        tumans = tumans.scalars()
+    try:
+        if lang == 'uz':
+            viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_uz=viloyat))
+            viloyat_m = viloyat_m.scalar()
+            tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
+            tumans = tumans.scalars()
 
-        kb_generator = [x.name_uz2 for x in tumans]
+            kb_generator = [x.name_uz2 for x in tumans]
 
-    elif lang == 'ru':
-        viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_ru=viloyat))
-        viloyat_m = viloyat_m.scalar()
-        tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
-        tumans = tumans.scalars()
+        elif lang == 'ru':
+            viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_ru=viloyat))
+            viloyat_m = viloyat_m.scalar()
+            tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
+            tumans = tumans.scalars()
 
-        kb_generator = [x.name_ru2 for x in tumans]
-    else:
-        viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_uz_kir=viloyat))
-        viloyat_m = viloyat_m.scalar()
-        tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
-        tumans = tumans.scalars()
+            kb_generator = [x.name_ru2 for x in tumans]
+        else:
+            viloyat_m = await db.session.execute(select(db.Viloyat).filter_by(name_uz_kir=viloyat))
+            viloyat_m = viloyat_m.scalar()
+            tumans = await db.session.execute(select(db.Tuman).filter_by(viloyat_id=viloyat_m.id))
+            tumans = tumans.scalars()
 
-        kb_generator = [x.name_uz_kir2 for x in tumans]
+            kb_generator = [x.name_uz_kir2 for x in tumans]
 
-    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=1, one_time_keyboard=True).add(*kb_generator)
+        kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=1, one_time_keyboard=True).add(*kb_generator)
 
-    return kb
+        return kb
+    except Exception as e:
+        print(e)
+        return None
 
 
 async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
@@ -315,45 +319,58 @@ async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
 
 @dp.message_handler(state=Regist.viloyat)
 async def load_viloyat(message: types.Message, state: FSMContext):
-    step = 4
-    async with state.proxy() as data:
-        if message.text == _('Orqaga', locale=data['lang']):
-            text = await take_text(data['lang'], 2, message.from_user.id, message)
-            await bot.send_message(message.from_user.id, text,
-                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                       KeyboardButton(_("Telefon raqamni jo'natish", locale=data['lang']),
-                                                      request_contact=True)).add(_('Orqaga', locale=data['lang'])))
-            await Regist.previous()
-            return
+    try:
+        step = 4
+        async with state.proxy() as data:
+            if message.text == _('Orqaga', locale=data['lang']):
+                text = await take_text(data['lang'], 2, message.from_user.id, message)
+                await bot.send_message(message.from_user.id, text,
+                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True,
+                                                                        one_time_keyboard=True).add(
+                                           KeyboardButton(_("Telefon raqamni jo'natish", locale=data['lang']),
+                                                          request_contact=True)).add(_('Orqaga', locale=data['lang'])))
+                await Regist.previous()
+                return
 
-        data['viloyat'] = message.text
+            data['viloyat'] = message.text
+
+        text = await take_text(data['lang'], step, message.from_user.id, message)
+        kb = await generate_tuman_kb(message.text, data['lang'])
+
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
         await Regist.next()
-
-    text = await take_text(data['lang'], step, message.from_user.id, message)
-    kb = await generate_tuman_kb(message.text, data['lang'])
-
-    await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
+    except Exception as e:
+        print(e)
+        text = await take_text(data['lang'], 3, message.from_user.id, message)
+        await message.answer(text)
+        return
 
 
 @dp.message_handler(state=Regist.tuman)
 async def load_tuman(message: types.Message, state: FSMContext):
     step = 5
+    try:
+        async with state.proxy() as data:
+            if message.text == _('Orqaga', locale=data['lang']):
+                text = await take_text(data['lang'], 3, message.from_user.id, message)
+                kb = await get_viloyats(data['lang'])
+                await bot.send_message(message.from_user.id, text,
+                                       reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
+                await Regist.previous()
+                return
 
-    async with state.proxy() as data:
-        if message.text == _('Orqaga', locale=data['lang']):
-            text = await take_text(data['lang'], 3, message.from_user.id, message)
-            kb = await get_viloyats(data['lang'])
-            await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
-            await Regist.previous()
-            return
+            data['tuman'] = message.text
 
-        data['tuman'] = message.text
+        text = await take_text(data['lang'], step, message.from_user.id, message)
+        kb = await generate_mahalla_kb(message.text, data['lang'])
+
+        await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
         await Regist.next()
-
-    text = await take_text(data['lang'], step, message.from_user.id, message)
-    kb = await generate_mahalla_kb(message.text, data['lang'])
-
-    await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
+    except Exception as e:
+        print(e)
+        text = await take_text(data['lang'], 4, message.from_user.id, message)
+        await message.answer(text)
+        return
 
 
 @dp.message_handler(state=Regist.mfy)
@@ -361,7 +378,6 @@ async def load_mfy(message: types.Message, state: FSMContext):
     step = 6
 
     async with state.proxy() as data:
-        data['mfy'] = message.text
 
         if message.text == _('Orqaga', locale=data['lang']):
             text = await take_text(data['lang'], 4, message.from_user.id, message)
@@ -370,16 +386,24 @@ async def load_mfy(message: types.Message, state: FSMContext):
             await Regist.previous()
             return
 
-        else:
-            await Regist.next()
+        mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz=message.text))
+        mfy = mfy.scalar()
+        if mfy is None:
+            text = await take_text(data['lang'], 5, message.from_user.id, message)
+            await message.answer(text)
+            return
 
-    text = await take_text(data['lang'], step, message.from_user.id, message)
+        data['mfy'] = message.text
 
-    await bot.send_message(message.from_user.id, text,
-                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                               KeyboardButton(_('Erkak', locale=data['lang'])),
-                               KeyboardButton(_('Ayol', locale=data['lang']))).add(
-                               _('Orqaga', locale=data['lang'])))
+        text = await take_text(data['lang'], step, message.from_user.id, message)
+
+        await Regist.next()
+
+        await bot.send_message(message.from_user.id, text,
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                   KeyboardButton(_('Erkak', locale=data['lang'])),
+                                   KeyboardButton(_('Ayol', locale=data['lang']))).add(
+                                   _('Orqaga', locale=data['lang'])))
 
 
 @dp.message_handler(state=Regist.sex)
@@ -387,22 +411,27 @@ async def load_sex(message: types.Message, state: FSMContext):
     step = 7
 
     async with state.proxy() as data:
-        data['sex'] = message.text
 
         if message.text == _('Orqaga', locale=data['lang']):
-            text = await take_text('uz', 5, message.from_user.id, message)
+            text = await take_text(data['lang'], 5, message.from_user.id, message)
             kb = await generate_mahalla_kb(data['tuman'], data['lang'])
             await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
             await Regist.previous()
             return
 
-        else:
+        if message.text == _('Erkak', locale=data['lang']) or message.text == _('Ayol', locale=data['lang']):
+            data['sex'] = message.text
+
+            text = await take_text(data['lang'], step, message.from_user.id, message)
+
+            await bot.send_message(message.from_user.id, text,
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                       _('Orqaga', locale=data['lang'])))
             await Regist.next()
-
-    text = await take_text(data['lang'], step, message.from_user.id, message)
-
-    await bot.send_message(message.from_user.id, text,
-                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(_('Orqaga', locale=data['lang'])))
+        else:
+            text = await take_text(data['lang'], 6, message.from_user.id, message)
+            await message.answer(text)
+            return
 
 
 @dp.message_handler(state=Regist.years)  # regexp=r"^(\d+)$"
