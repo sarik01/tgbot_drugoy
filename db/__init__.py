@@ -27,9 +27,8 @@ class User(Base):
     sex = Column('sex', String)
     year = Column('year', Integer)
     tg_user_id = Column('tg_user_id', BigInteger)
-    application = relationship("Application", backref='users')
+    application = relationship("Application", backref='users', cascade="all,delete")
     viloyat_id = Column(Integer, ForeignKey('viloyat.id'))
-
 
 
 class Application(Base):
@@ -40,7 +39,7 @@ class Application(Base):
     answer = Column('answer', String)
     sent = Column('sent', String)
     lang = Column('lang', String)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'),)
     created_at = Column('created_at', DateTime, default=datetime.datetime.now())
 
 
