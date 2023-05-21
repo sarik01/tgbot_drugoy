@@ -609,7 +609,7 @@ async def createUser(state, user_id):
 
             if user:
 
-                app = db.Application(application=object[5], user_id=user.id, lang=object[3])
+                app = db.Application(application=data['ad'], user_id=user.id, lang=data['lang'])
 
                 db.session.add(app)
                 await db.session.commit()
