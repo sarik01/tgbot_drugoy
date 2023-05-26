@@ -52,10 +52,10 @@ async def commands_start(message: types.Message):
     if user:
         print('User')
         await bot.send_message(user_id, text, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
 
         return user
     else:
@@ -107,7 +107,7 @@ async def take_text(lang, step, user_id, message=None, ls=None):
         return text.step9
 
 
-@dp.message_handler(Text(equals="Murojaatingizni qoldiring"))
+@dp.message_handler(Text(equals="Murojaatingizni qoldiring 📝"))
 @dp.message_handler(Text(equals="O'zbekcha"))
 async def murojat_handlers_uz(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
@@ -141,7 +141,7 @@ async def murojat_handlers_uz(message: types.Message, state: FSMContext):
         await Regist.name.set()
 
 
-@dp.message_handler(Text(equals="Оставьте обращение"))
+@dp.message_handler(Text(equals="Оставьте обращение 📝"))
 @dp.message_handler(Text(equals="Русский"))
 async def murojat_handlers_ru(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
@@ -175,7 +175,7 @@ async def murojat_handlers_ru(message: types.Message, state: FSMContext):
         await Regist.name.set()
 
 
-@dp.message_handler(Text(equals="Múrájatlarıńıstı qaldıriń"))
+@dp.message_handler(Text(equals="Múrájatlarıńıstı qaldıriń 📝"))
 @dp.message_handler(Text(equals="Qoraqalpoqcha"))
 async def murojat_handlers_uz_kir(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
@@ -438,7 +438,7 @@ async def load_sex(message: types.Message, state: FSMContext):
 async def load_years(message: types.Message, state: FSMContext):
     step = 8
     try:
-        if int(message.text) > 14 and int(message.text) < 36:
+        if int(message.text) > 15 and int(message.text) < 31:
             print(message.text)
             async with state.proxy() as data:
                 data['years'] = int(message.text)
@@ -474,7 +474,7 @@ async def load_years(message: types.Message, state: FSMContext):
                 return
 
             else:
-                await bot.send_message(message.from_user.id, '15-35')
+                await bot.send_message(message.from_user.id, '16-30')
                 return
 
 
@@ -555,10 +555,10 @@ async def load_ad(message: types.Message, state: FSMContext):
 
     await bot.send_message(message.from_user.id, _('Asosiy menyu', locale=data['lang']),
                            reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                               KeyboardButton(_('Mening murojaatlarim', locale=data['lang']))
-                           ).add(KeyboardButton(_('Murojaatingizni qoldiring', locale=data['lang']))
-                                 ).add(KeyboardButton(_("Tilni o'zgartirish", locale=data['lang']))).add(
-                               KeyboardButton(_('Sozlamalar', locale=data['lang']))))
+                               KeyboardButton(_('Mening murojaatlarim 🧾', locale=data['lang']))
+                           ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝', locale=data['lang']))
+                                 ).add(KeyboardButton(_("🇺🇿/🇷🇺", locale=data['lang']))).add(
+                               KeyboardButton(_('Sozlamalar ⚙️', locale=data['lang']))))
 
 
 async def sql_read2(message, lang, step):
@@ -583,26 +583,26 @@ async def createUser(state, user_id):
 
         if data['ad'] == 'Biykar etiw' or object[0] == 'Biykar etiw':
             await bot.send_message(user_id, 'Biykar etiw', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                KeyboardButton(_('Mening murojaatlarim'))
-            ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-                  ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-                KeyboardButton(_('Sozlamalar'))))
+                KeyboardButton(_('Mening murojaatlarim 🧾'))
+            ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                  ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                KeyboardButton(_('Sozlamalar ⚙️'))))
             return ''
 
         if data['ad'] == 'Отмена' or object[0] == 'Отмена':
             await bot.send_message(user_id, 'Отмена', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                KeyboardButton(_('Mening murojaatlarim'))
-            ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-                  ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-                KeyboardButton(_('Sozlamalar'))))
+                KeyboardButton(_('Mening murojaatlarim 🧾'))
+            ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                  ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                KeyboardButton(_('Sozlamalar ⚙️'))))
             return ''
 
         if data['ad'] == 'Bekor qilish' or object[0] == 'Bekor qilish':
             await bot.send_message(user_id, 'Bekor qilish', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                KeyboardButton(_('Mening murojaatlarim'))
-            ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-                  ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-                KeyboardButton(_('Sozlamalar'))))
+                KeyboardButton(_('Mening murojaatlarim 🧾'))
+            ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                  ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                KeyboardButton(_('Sozlamalar ⚙️'))))
             return ''
 
         else:
@@ -673,10 +673,10 @@ async def get_tuman_id(tuman: str, lang: str) -> db.Tuman.id:
 async def cancel_purchase(message: types.Message):
     await bot.send_message(message.from_user.id, _('Bekor qilish'),
                            reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                               KeyboardButton(_('Mening murojaatlarim'))
-                           ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-                                 ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-                               KeyboardButton(_('Sozlamalar'))))
+                               KeyboardButton(_('Mening murojaatlarim 🧾'))
+                           ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                                 ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                               KeyboardButton(_('Sozlamalar ⚙️'))))
     return
 
 
@@ -744,9 +744,9 @@ async def send_mail2(message: str) -> str:
 #                     '''
 #         await bot.send_message(user_id, message)
 
-@dp.message_handler(Text(equals='Mening murojaatlarim'))
-@dp.message_handler(Text(equals='Мои обращения'))
-@dp.message_handler(Text(equals='Meniń múrájatlarım'))
+@dp.message_handler(Text(equals='Mening murojaatlarim 🧾'))
+@dp.message_handler(Text(equals='Мои обращения 🧾'))
+@dp.message_handler(Text(equals='Meniń múrájatlarım 🧾'))
 async def my_applications(message: types.Message):
     user_id = message.from_user.id
 
@@ -761,9 +761,9 @@ def lang_change_handler():
         dp.register_message_handler(change_lang, Text(equals=i))
 
 
-@dp.message_handler(Text(equals="Tilni o'zgartirish"))
-@dp.message_handler(Text(equals="Поменять язык"))
-@dp.message_handler(Text(equals="Tildi ózgertiw"))
+@dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
+@dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
+@dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
 async def select_lang(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
@@ -789,10 +789,10 @@ async def change_lang(message: types.Message):
         user = user.scalar()
         user.lang = 'uz'
         await db.session.commit()
-        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Mening murojaatlarim')
-                                                                ).add(KeyboardButton('Murojaatingizni qoldiring')
-                                                                      ).add(KeyboardButton("Tilni o'zgartirish")).add(
-            KeyboardButton('Sozlamalar'))
+        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Mening murojaatlarim 🧾')
+                                                                ).add(KeyboardButton('Murojaatingizni qoldiring 📝')
+                                                                      ).add(KeyboardButton("🇺🇿/🇷🇺")).add(
+            KeyboardButton('Sozlamalar ⚙️'))
         await bot.send_message(message.from_user.id, "Til o'zgartirildi", reply_markup=user_kb)
 
     if message.text == 'На русский':
@@ -800,10 +800,10 @@ async def change_lang(message: types.Message):
         user = user.scalar()
         user.lang = 'ru'
         await db.session.commit()
-        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Мои обращения')
-                                                                ).add(KeyboardButton('Оставьте обращение')
-                                                                      ).add(KeyboardButton("Поменять язык")).add(
-            KeyboardButton('Настройки'))
+        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Мои обращения 🧾')
+                                                                ).add(KeyboardButton('Оставьте обращение 📝')
+                                                                      ).add(KeyboardButton("🇺🇿/🇷🇺")).add(
+            KeyboardButton('Настройки ⚙️'))
 
         await bot.send_message(message.from_user.id, 'Язык изменен', reply_markup=user_kb)
     if message.text == "Qoraqolpoqchaga":
@@ -811,21 +811,21 @@ async def change_lang(message: types.Message):
         user = user.scalar()
         user.lang = 'uz_kir'
         await db.session.commit()
-        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Meniń múrájatlarım')
-                                                                ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń')
-                                                                      ).add(KeyboardButton("Tildi ózgertiw")).add(
-            KeyboardButton('Sazlamalar'))
+        user_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Meniń múrájatlarım 🧾')
+                                                                ).add(KeyboardButton('Múrájatlarıńıstı qaldıriń 📝')
+                                                                      ).add(KeyboardButton("🇺🇿/🇷🇺")).add(
+            KeyboardButton('Sazlamalar ⚙️'))
         await bot.send_message(message.from_user.id, 'Til ózgertildi', reply_markup=user_kb)
 
 
-@dp.message_handler(Text(equals='Sozlamalar'))
-@dp.message_handler(Text(equals='Настройки'))
-@dp.message_handler(Text(equals='Sazlamalar'))
+@dp.message_handler(Text(equals='Sozlamalar ⚙️'))
+@dp.message_handler(Text(equals='Настройки ⚙️'))
+@dp.message_handler(Text(equals='Sazlamalar ⚙️'))
 async def settings(message: types.Message):
     uz_sets = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
         KeyboardButton(_("Ma'lumotlarni ko'rish")))
 
-    await bot.send_message(message.from_user.id, _('Sozlamalar'), reply_markup=uz_sets)
+    await bot.send_message(message.from_user.id, _('Sozlamalar ⚙️'), reply_markup=uz_sets)
 
 
 def handlers_settings_changes():
@@ -870,10 +870,10 @@ async def changeName(message: types.Message, state: FSMContext):
 
     if new_name == _('Bekor qilish'):
         await bot.send_message(user_id, _('Bekor qilish'), reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
         return
 
     else:
@@ -881,10 +881,10 @@ async def changeName(message: types.Message, state: FSMContext):
         await db.session.commit()
 
         await bot.send_message(message.from_user.id, 'ok', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
 
 
 @dp.message_handler(content_types=types.ContentType.CONTACT, state=Regist.change_phone)
@@ -896,10 +896,10 @@ async def changePhone(message: types.Message, state: FSMContext):
     await state.finish()
     if new_name == _('Bekor qilish'):
         await bot.send_message(user_id, _('Bekor qilish'), reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
         return
 
     else:
@@ -907,10 +907,10 @@ async def changePhone(message: types.Message, state: FSMContext):
         await db.session.commit()
 
         await bot.send_message(message.from_user.id, 'ok', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
 
 
 @dp.message_handler(Text(equals="Ma'lumotlarni ko'rish"))
@@ -1000,10 +1000,10 @@ Sizdiń múrájatingiz: {app.application}
 {app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-        KeyboardButton(_('Mening murojaatlarim'))
-    ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-          ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-        KeyboardButton(_('Sozlamalar'))))
+        KeyboardButton(_('Mening murojaatlarim 🧾'))
+    ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+          ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+        KeyboardButton(_('Sozlamalar ⚙️'))))
 
 
 @dp.message_handler(state=Regist.change_viloyat)
@@ -1017,10 +1017,10 @@ async def change_viloyat(message: types.Message, state: FSMContext):
         await state.finish()
         await bot.send_message(user_id, _('Bekor qilish'),
                                reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-                                   KeyboardButton(_('Mening murojaatlarim'))
-                               ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-                                     ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-                                   KeyboardButton(_('Sozlamalar'))))
+                                   KeyboardButton(_('Mening murojaatlarim 🧾'))
+                               ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                                     ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                                   KeyboardButton(_('Sozlamalar ⚙️'))))
         return
 
     else:
@@ -1043,10 +1043,10 @@ async def change_tuman(message: types.Message, state: FSMContext):
     if new_tuman == _('Bekor qilish'):
         await state.finish()
         await bot.send_message(user_id, _('Bekor qilish'), reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
         return
 
     else:
@@ -1090,10 +1090,10 @@ async def change_mfy(message: types.Message, state: FSMContext):
     if new_mfy == _('Bekor qilish'):
         await state.finish()
         await bot.send_message(user_id, _('Bekor qilish'), reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
         return
 
     else:
@@ -1125,10 +1125,10 @@ async def change_mfy(message: types.Message, state: FSMContext):
         await state.finish()
 
         await bot.send_message(message.from_user.id, 'ok', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-            KeyboardButton(_('Mening murojaatlarim'))
-        ).add(KeyboardButton(_('Murojaatingizni qoldiring'))
-              ).add(KeyboardButton(_("Tilni o'zgartirish"))).add(
-            KeyboardButton(_('Sozlamalar'))))
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
 
 
 @dp.message_handler(commands='logout')

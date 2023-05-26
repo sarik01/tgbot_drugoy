@@ -4,7 +4,6 @@ from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from loader import dp
 from db import engine, Base
 import routes
-from test import start
 from utils.misc.set_bot_commands import set_default_commands
 
 dp.middleware.setup(LoggingMiddleware())

@@ -21,27 +21,27 @@ msgstr ""
 #: routes.py:56 routes.py:530 routes.py:558 routes.py:566 routes.py:574
 #: routes.py:648 routes.py:845 routes.py:856 routes.py:871 routes.py:882
 #: routes.py:975 routes.py:992 routes.py:1018 routes.py:1065 routes.py:1099
-msgid "Mening murojaatlarim"
-msgstr "Meniń múrájatlarım  "
+msgid "Mening murojaatlarim 🧾"
+msgstr "Meniń múrájatlarım 🧾"
 
 #: routes.py:57 routes.py:531 routes.py:559 routes.py:567 routes.py:575
 #: routes.py:649 routes.py:846 routes.py:857 routes.py:872 routes.py:883
 #: routes.py:976 routes.py:993 routes.py:1019 routes.py:1066 routes.py:1100
-msgid "Murojaatingizni qoldiring"
-msgstr "Múrájatlarıńıstı qaldıriń"
+msgid "Murojaatingizni qoldiring 📝"
+msgstr "Múrájatlarıńıstı qaldıriń 📝"
 
 #: routes.py:58 routes.py:532 routes.py:560 routes.py:568 routes.py:576
 #: routes.py:650 routes.py:847 routes.py:858 routes.py:873 routes.py:884
 #: routes.py:977 routes.py:994 routes.py:1020 routes.py:1067 routes.py:1101
-msgid "Tilni o'zgartirish"
-msgstr "Tildi ózgertiw"
+msgid "🇺🇿/🇷🇺"
+msgstr "🇺🇿/🇷🇺"
 
 #: routes.py:59 routes.py:533 routes.py:561 routes.py:569 routes.py:577
 #: routes.py:651 routes.py:800 routes.py:848 routes.py:859 routes.py:874
 #: routes.py:885 routes.py:978 routes.py:995 routes.py:1021 routes.py:1068
 #: routes.py:1102
-msgid "Sozlamalar"
-msgstr "Sazlamalar"
+msgid "Sozlamalar ⚙️"
+msgstr "Sazlamalar ⚙️"
 
 #: routes.py:136 routes.py:170 routes.py:175 routes.py:204 routes.py:222
 #: routes.py:224 routes.py:246 routes.py:522 routes.py:646 routes.py:727
