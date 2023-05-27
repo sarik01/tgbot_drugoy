@@ -1,0 +1,26 @@
+services:
+  tg-bot:
+    build:
+      context: .
+    volumes:
+      - .:/tgbot_drugoy
+    environment:
+      - DB_HOST=database
+      - DB_NAME=dbname
+      - DB_USER=postgres
+      - DB_PASS=123456
+    command: >
+      sh -c "python app.py"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14.6-alpine
+    environment:
+      - POSTGRES_DB=tgbot
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - 5436:5432
+    expose:
+      - 5436
