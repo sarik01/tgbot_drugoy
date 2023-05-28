@@ -6,7 +6,7 @@ services:
       - .:/tgbot_drugoy
     environment:
       - DB_HOST=database
-      - DB_NAME=dbname
+      - DB_NAME=tgbot
       - DB_USER=postgres
       - DB_PASS=123456
     command: >

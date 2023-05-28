@@ -19,7 +19,44 @@ b3 = KeyboardButton("Qoraqalpoqcha")
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_client.add(b1).add(b2).add(b3)
 
+def sesionExceptionsState():
+    def outer(func):
+        async def wrapper(*args, **kwargs):
+            # print(args)
+            try:
+                # this is where the "work" happens!
+                if kwargs != {}:
+                    res = await func(*args, kwargs['state'])
+                else:
+                    res = await func(*args, **kwargs)
+            except:
+                # if any kind of exception occurs, rollback transaction
+                await db.session.rollback()
+                raise
+            finally:
+                await db.session.close()
+            return res
+        return wrapper
 
+    return outer
+
+def sesionExceptions():
+    def outer(func):
+        async def wrapper(*args, **kwargs):
+            # print(args)
+            try:
+                # this is where the "work" happens!
+                res = await func(*args)
+            except:
+                # if any kind of exception occurs, rollback transaction
+                await db.session.rollback()
+                raise
+            finally:
+                await db.session.close()
+            return res
+        return wrapper
+
+    return outer
 class Regist(StatesGroup):
     name = State()
     phone = State()
@@ -40,6 +77,7 @@ class Regist(StatesGroup):
 
 
 @dp.message_handler(commands=['start', 'help'])
+@sesionExceptions()
 async def commands_start(message: types.Message):
     user_id = message.from_user.id
 
@@ -79,7 +117,7 @@ async def commands_start(message: types.Message):
         await bot.send_message(user_id, multitext, reply_markup=kb_client)
         await bot.send_message(user_id, multilang)
 
-
+@sesionExceptions()
 async def take_text(lang, step, user_id, message=None, ls=None):
     text = await db.session.execute(select(db.Text).filter_by(lang=lang))
     text = text.scalar()
@@ -109,7 +147,9 @@ async def take_text(lang, step, user_id, message=None, ls=None):
 
 @dp.message_handler(Text(equals="Murojaatingizni qoldiring 📝"))
 @dp.message_handler(Text(equals="O'zbekcha"))
+@sesionExceptionsState()
 async def murojat_handlers_uz(message: types.Message, state: FSMContext):
+
     user_id = message.from_user.id
 
     global status_lang
@@ -143,6 +183,7 @@ async def murojat_handlers_uz(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="Оставьте обращение 📝"))
 @dp.message_handler(Text(equals="Русский"))
+@sesionExceptionsState()
 async def murojat_handlers_ru(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
 
@@ -177,6 +218,7 @@ async def murojat_handlers_ru(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="Múrájatlarıńıstı qaldıriń 📝"))
 @dp.message_handler(Text(equals="Qoraqalpoqcha"))
+@sesionExceptionsState()
 async def murojat_handlers_uz_kir(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
 
@@ -254,7 +296,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
 
         await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
 
-
+@sesionExceptions()
 async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
     try:
         if lang == 'uz':
@@ -287,7 +329,7 @@ async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
         print(e)
         return None
 
-
+@sesionExceptions()
 async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
     if lang == 'uz':
         tuman_m = await db.session.execute(select(db.Tuman).filter_by(name_uz2=tuman))
@@ -477,7 +519,7 @@ async def load_years(message: types.Message, state: FSMContext):
                 await bot.send_message(message.from_user.id, '16-30')
                 return
 
-
+@sesionExceptions()
 async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
     viloyats = await db.session.execute(select(db.Viloyat))
 
@@ -494,7 +536,7 @@ async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
 
     return kb
 
-
+@sesionExceptions()
 async def get_mfys(lang: str) -> ReplyKeyboardMarkup:
     mahalas = await db.session.execute(select(db.Mfy))
 
@@ -511,7 +553,7 @@ async def get_mfys(lang: str) -> ReplyKeyboardMarkup:
 
     return kb
 
-
+@sesionExceptions()
 async def get_orders(user_id):
     apps = await db.session.execute(select(db.Application).join(db.User, db.User.id == db.Application.user_id).filter(
         db.User.tg_user_id == user_id).order_by(db.Application.id))
@@ -560,7 +602,7 @@ async def load_ad(message: types.Message, state: FSMContext):
                                  ).add(KeyboardButton(_("🇺🇿/🇷🇺", locale=data['lang']))).add(
                                KeyboardButton(_('Sozlamalar ⚙️', locale=data['lang']))))
 
-
+@sesionExceptions()
 async def sql_read2(message, lang, step):
     app = await db.session.execute(select(db.Application.id).join(db.User, db.User.id == db.Application.user_id).filter(
         db.User.tg_user_id == message.from_user.id))
@@ -574,7 +616,7 @@ async def sql_read2(message, lang, step):
     await bot.send_message(message.from_user.id, text)
     return ls[-1]
 
-
+@sesionExceptionsState()
 async def createUser(state, user_id):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=user_id))
     user = user.scalar()
@@ -654,7 +696,7 @@ async def createUser(state, user_id):
                 db.session.add_all([user, app])
                 await db.session.commit()
 
-
+@sesionExceptions()
 async def get_tuman_id(tuman: str, lang: str) -> db.Tuman.id:
     if lang == 'uz':
         tuman = await db.session.execute(select(db.Tuman).filter_by(name_uz2=tuman))
@@ -764,6 +806,7 @@ def lang_change_handler():
 @dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
 @dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
 @dp.message_handler(Text(equals="🇺🇿/🇷🇺"))
+@sesionExceptions()
 async def select_lang(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
@@ -782,7 +825,7 @@ async def select_lang(message: types.Message):
         await bot.send_message(message.from_user.id, 'Húrmetli puxara, iltimas interfeys tilin tańlań!',
                                reply_markup=kb_client_change)
 
-
+@sesionExceptions()
 async def change_lang(message: types.Message):
     if message.text == "O'zbekchaga":
         user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
@@ -834,13 +877,13 @@ def handlers_settings_changes():
     for x in ls:
         dp.register_message_handler(change_settings, Text(equals=x))
 
-
-async def change_settings(message: types.Message, state: FSMContext):
+@sesionExceptions()
+async def change_settings(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
-    if message.text == _('Ism sharifini o`zgartirish'):
+    if message.text == _("Ism sharifini o'zgartirish"):
         await changes(message.from_user.id, message, Regist, user.lang, 'change_name')
-    if message.text == _('Telefonni o`zgartirish'):
+    if message.text == _("Telefonni o'zgartirish"):
         await changes(message.from_user.id, message, Regist, user.lang, 'change_phone')
 
 
@@ -861,6 +904,7 @@ async def changes(user_id, message, Regist, lang, step):
 
 
 @dp.message_handler(state=Regist.change_name)
+@sesionExceptionsState()
 async def changeName(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     new_name = message.text
@@ -888,6 +932,7 @@ async def changeName(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(content_types=types.ContentType.CONTACT, state=Regist.change_phone)
+@sesionExceptionsState()
 async def changePhone(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     new_name = message.contact.phone_number
@@ -916,6 +961,7 @@ async def changePhone(message: types.Message, state: FSMContext):
 @dp.message_handler(Text(equals="Ma'lumotlarni ko'rish"))
 @dp.message_handler(Text(equals="Посмотреть данные"))
 @dp.message_handler(Text(equals="Maǵlıwmatlardı kóriw"))
+@sesionExceptions()
 async def sendMyName(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(
@@ -948,6 +994,7 @@ async def sendMyName(message: types.Message):
 @dp.message_handler(Text(equals="Hududni o'zgartirish"))
 @dp.message_handler(Text(equals="Поменять область"))
 @dp.message_handler(Text(equals="Aymaqtı ózgertiw"))
+@sesionExceptions()
 async def change_viloyat_button(message: types.Message):
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=message.from_user.id))
     user = user.scalar()
@@ -955,21 +1002,21 @@ async def change_viloyat_button(message: types.Message):
     await Regist.change_viloyat.set()
     await bot.send_message(message.from_user.id, _("Tugmasini bosing"), reply_markup=kb.add(_('Bekor qilish')))
 
-
+@sesionExceptions()
 async def handlers_uz():
     cats = await db.session.execute(select(db.Viloyat))
     cats = cats.scalars()
     for x in cats:
         dp.register_message_handler(change_viloyat, Text(equals=x.name_uz), state=None)
 
-
+@sesionExceptions()
 async def handler_murojats():
     cats = await db.session.execute(select(db.Application))
     cats = cats.scalars()
     for x in cats:
         dp.register_message_handler(get_murojat, Text(equals=f'№{x.id}'), state=None)
 
-
+@sesionExceptions()
 async def get_murojat(message: types.Message):
     user_id = message.from_user.id
     print(int(message.text[1:]))
@@ -1007,6 +1054,7 @@ Sizdiń múrájatingiz: {app.application}
 
 
 @dp.message_handler(state=Regist.change_viloyat)
+@sesionExceptionsState()
 async def change_viloyat(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     new_name = message.text
@@ -1034,6 +1082,7 @@ async def change_viloyat(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=Regist.change_tuman)
+@sesionExceptionsState()
 async def change_tuman(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     new_tuman = message.text
@@ -1081,6 +1130,7 @@ async def change_tuman(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=Regist.change_mfy)
+@sesionExceptionsState()
 async def change_mfy(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     new_mfy = message.text
@@ -1132,6 +1182,7 @@ async def change_mfy(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands='logout')
+@sesionExceptions()
 async def logout(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(select(db.User).filter_by(tg_user_id=user_id))
