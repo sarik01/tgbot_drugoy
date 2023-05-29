@@ -22,8 +22,8 @@ class User(Base):
     fio = Column('fio', String)
     phone = Column('phone', String)
     lang = Column('lang', String)
-    tuman_id = Column('tuman_id', Integer)
-    mfy_id = Column('mfy_id', Integer)
+    tuman_id = Column(Integer, ForeignKey('tuman.id'))
+    mfy_id = Column(Integer, ForeignKey('mfy.id'))
     sex = Column('sex', String)
     year = Column('year', Integer)
     tg_user_id = Column('tg_user_id', BigInteger)
@@ -80,6 +80,7 @@ class Tuman(Base):
     district_id = Column('district_id', BigInteger)
     viloyat_id = Column(Integer, ForeignKey('viloyat.id'))
     mahalas = relationship("Mfy", backref='mahala')
+    user = relationship("User", backref='user_tuman' )
 
 
 class Mfy(Base):
@@ -89,6 +90,7 @@ class Mfy(Base):
     name_ru = Column('name_ru', String(150))
     name_uz_kir = Column('name_uz_kir', String(150))
     tuman_id = Column(Integer, ForeignKey('tuman.id'))
+    user = relationship("User", backref='mfys')
 
 async def get_lang(user_id) -> str:
 

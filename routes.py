@@ -965,12 +965,12 @@ async def changePhone(message: types.Message, state: FSMContext):
 async def sendMyName(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(
-        select(db.User).filter_by(tg_user_id=user_id).options(selectinload(db.User.viloyati)))
+        select(db.User).filter_by(tg_user_id=user_id).options(selectinload(db.User.viloyati), selectinload(db.User.user_tuman), selectinload(db.User.mfys)))
 
     user = user.scalar()
 
-    tuman = await db.session.execute(select(db.Tuman).filter_by(id=user.tuman_id))
-    tuman = tuman.scalar()
+    # tuman = await db.session.execute(select(db.Tuman).filter_by(id=user.tuman_id))
+    # tuman = tuman.scalar()
 
     sets_change = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
         KeyboardButton(_("Ism sharifini o'zgartirish"))).add(KeyboardButton(_("Telefonni o'zgartirish"))).add(
@@ -979,15 +979,15 @@ async def sendMyName(message: types.Message):
 
     if user.lang == 'uz':
         await bot.send_message(user_id,
-                               f'Sizning FISH {user.fio}, Sizning telefon raqamingiz: {user.phone}, {user.viloyati.name_uz}, {tuman.name_uz2}',
+                               f'Sizning FISH {user.fio}, Sizning telefon raqamingiz: {user.phone}, {user.viloyati.name_uz}, {user.user_tuman.name_uz2}, {user.mfys.name_uz}',
                                reply_markup=sets_change)
     elif user.lang == 'ru':
         await bot.send_message(user_id,
-                               f'Ваше ФИО  {user.fio}, ваш номер телефона: {user.phone}, {user.viloyati.name_ru}, {tuman.name_ru2}',
+                               f'Ваше ФИО  {user.fio}, ваш номер телефона: {user.phone}, {user.viloyati.name_ru}, {user.user_tuman.name_ru2}, {user.mfys.name_uz}',
                                reply_markup=sets_change)
     else:
         await bot.send_message(user_id,
-                               f'Sizdiń FAA {user.fio}, Sizdiń telefon nomerińiz: {user.phone}, {user.viloyati.name_uz_kir}, {tuman.name_uz_kir2}',
+                               f'Sizdiń FAA {user.fio}, Sizdiń telefon nomerińiz: {user.phone}, {user.viloyati.name_uz_kir}, {user.user_tuman.name_uz_kir2}, {user.mfys.name_uz}',
                                reply_markup=sets_change)
 
 
