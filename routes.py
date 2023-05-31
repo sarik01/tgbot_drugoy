@@ -1032,21 +1032,21 @@ async def get_murojat(message: types.Message):
 
         message = f'''№{app.id}
 Sizning murojaatingiz: {app.application}
-Javob: ｛app.answer}
+Javob: {app.answer if app.answer else ''}
 {app.created_at.strftime("%Y.%m.%d")}
-            '''
+        '''
     elif user.lang == 'ru':
 
         message = f'''№{app.id}
 Ваше обращение: {app.application}
-Ответ: ｛app.answer}
+Ответ: {app.answer if app.answer else ''}
 {app.created_at.strftime("%Y.%m.%d")}
-            '''
+        '''
     else:
 
         message = f'''№{app.id}
 Sizdiń múrájatingiz: {app.application}
-Juwap: ｛app.answer}
+Juwap: {app.answer if app.answer else ''}
 {app.created_at.strftime("%Y.%m.%d")}
                     '''
     await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
