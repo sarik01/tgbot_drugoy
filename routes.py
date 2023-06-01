@@ -673,20 +673,24 @@ async def createUser(state, user_id):
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_uz=data['viloyat']))
                     tuman_id = await get_tuman_id(data['tuman'], data['lang'])
                     mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz=data['mfy']))
+                    sex = await db.session.execute(select(db.Sex).filter_by(name_uz=data['sex']))
 
                 if data['lang'] == 'ru':
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_ru=data['viloyat']))
                     mfy = await db.session.execute(select(db.Mfy).filter_by(name_ru=data['mfy']))
+                    sex = await db.session.execute(select(db.Sex).filter_by(name_ru=data['sex']))
                     tuman_id = await get_tuman_id(data['tuman'], data['lang'])
                 if data['lang'] == 'uz_kir':
                     cat = await db.session.execute(select(db.Viloyat).filter_by(name_uz_kir=data['viloyat']))
                     mfy = await db.session.execute(select(db.Mfy).filter_by(name_uz_kir=data['mfy']))
+                    sex = await db.session.execute(select(db.Sex).filter_by(name_uz_kir=data['sex']))
                     tuman_id = await get_tuman_id(data['tuman'], data['lang'])
                 cat = cat.scalar()
                 mfy = mfy.scalar()
+                sex = sex.scalar()
 
                 user = db.User(fio=data['name'], phone=data['phone'], viloyat_id=cat.id, year=data['years'],
-                               mfy_id=mfy.id, sex=data['sex'], tuman_id=tuman_id,
+                               mfy_id=mfy.id, sex_id=sex.id, tuman_id=tuman_id,
                                tg_user_id=data['user_id'], lang=data['lang'])
                 db.session.add(user)
                 await db.session.flush()

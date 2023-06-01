@@ -24,7 +24,7 @@ class User(Base):
     lang = Column('lang', String)
     tuman_id = Column(Integer, ForeignKey('tuman.id'))
     mfy_id = Column(Integer, ForeignKey('mfy.id'))
-    sex = Column('sex', String)
+    sex_id = Column(Integer, ForeignKey('sex.id'),)
     year = Column('year', Integer)
     tg_user_id = Column('tg_user_id', BigInteger)
     application = relationship("Application", backref='users', cascade="all,delete")
@@ -91,6 +91,15 @@ class Mfy(Base):
     name_uz_kir = Column('name_uz_kir', String(150))
     tuman_id = Column(Integer, ForeignKey('tuman.id'))
     user = relationship("User", backref='mfys')
+
+
+class Sex(Base):
+    __tablename__ = 'sex'
+    id = Column(Integer, primary_key=True)
+    name_uz = Column(String(150))
+    name_ru = Column(String(150))
+    name_uz_kir = Column(String(150))
+    user = relationship("User", backref='sexs')
 
 async def get_lang(user_id) -> str:
 
