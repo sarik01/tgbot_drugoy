@@ -37,7 +37,6 @@ class Application(Base):
     status = Column('status', String, default='pending')
     application = Column('application', Text, default='pending')
     answer = Column('answer', String)
-    sent = Column('sent', String)
     lang = Column('lang', String)
     user_id = Column(Integer, ForeignKey('user.id'),)
     created_at = Column('created_at', DateTime, default=datetime.datetime.now())
@@ -66,7 +65,6 @@ class Viloyat(Base):
     name_uz = Column('name_uz', String(150))
     name_ru = Column('name_ru', String(150))
     name_uz_kir = Column('name_uz_kir', String(150))
-    region_id = Column('region_id', BigInteger)
     user = relationship("User", backref='viloyati')
     tumans = relationship("Tuman", backref='viloyati_tuman')
 
@@ -77,7 +75,6 @@ class Tuman(Base):
     name_uz2 = Column('name_uz2', String(150))
     name_ru2 = Column('name_ru2', String(150))
     name_uz_kir2 = Column('name_uz_kir2', String(150))
-    district_id = Column('district_id', BigInteger)
     viloyat_id = Column(Integer, ForeignKey('viloyat.id'))
     mahalas = relationship("Mfy", backref='mahala')
     user = relationship("User", backref='user_tuman' )

@@ -24,3 +24,9 @@ services:
       - 5436:5432
     expose:
       - 5436
+    volumes:
+      - tgbot_drugoy_data2:/var/lib/postgresql/data
+
+
+volumes:
+  tgbot_drugoy_data2:
