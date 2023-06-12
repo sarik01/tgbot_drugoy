@@ -39,6 +39,7 @@ class Application(Base):
     answer = Column('answer', String)
     lang = Column('lang', String)
     user_id = Column(Integer, ForeignKey('user.id'),)
+    rating = Column(Integer)
     created_at = Column('created_at', DateTime, default=datetime.datetime.now())
 
 

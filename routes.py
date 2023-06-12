@@ -4,7 +4,8 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.callback_data import CallbackData
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -18,6 +19,7 @@ b3 = KeyboardButton("Qoraqalpoqcha")
 
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_client.add(b1).add(b2).add(b3)
+
 
 def sesionExceptionsState():
     def outer(func):
@@ -36,9 +38,11 @@ def sesionExceptionsState():
             finally:
                 await db.session.close()
             return res
+
         return wrapper
 
     return outer
+
 
 def sesionExceptions():
     def outer(func):
@@ -54,9 +58,12 @@ def sesionExceptions():
             finally:
                 await db.session.close()
             return res
+
         return wrapper
 
     return outer
+
+
 class Regist(StatesGroup):
     name = State()
     phone = State()
@@ -74,6 +81,8 @@ class Regist(StatesGroup):
     change_tuman = State()
     change_mfy = State()
     change_sex = State()
+    rating = State()
+    rating_finish = State()
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -117,6 +126,7 @@ async def commands_start(message: types.Message):
         await bot.send_message(user_id, multitext, reply_markup=kb_client)
         await bot.send_message(user_id, multilang)
 
+
 @sesionExceptions()
 async def take_text(lang, step, user_id, message=None, ls=None):
     text = await db.session.execute(select(db.Text).filter_by(lang=lang))
@@ -149,7 +159,6 @@ async def take_text(lang, step, user_id, message=None, ls=None):
 @dp.message_handler(Text(equals="O'zbekcha"))
 @sesionExceptionsState()
 async def murojat_handlers_uz(message: types.Message, state: FSMContext):
-
     user_id = message.from_user.id
 
     global status_lang
@@ -296,6 +305,7 @@ async def load_phone(message: types.Message, state: FSMContext, editMessageReply
 
         await bot.send_message(message.from_user.id, text, reply_markup=kb.add(_('Orqaga', locale=data['lang'])))
 
+
 @sesionExceptions()
 async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
     try:
@@ -328,6 +338,7 @@ async def generate_tuman_kb(viloyat: str, lang: str) -> ReplyKeyboardMarkup:
     except Exception as e:
         print(e)
         return None
+
 
 @sesionExceptions()
 async def generate_mahalla_kb(tuman: str, lang: str) -> ReplyKeyboardMarkup:
@@ -519,6 +530,7 @@ async def load_years(message: types.Message, state: FSMContext):
                 await bot.send_message(message.from_user.id, '16-30')
                 return
 
+
 @sesionExceptions()
 async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
     viloyats = await db.session.execute(select(db.Viloyat))
@@ -536,6 +548,7 @@ async def get_viloyats(lang: str) -> ReplyKeyboardMarkup:
 
     return kb
 
+
 @sesionExceptions()
 async def get_mfys(lang: str) -> ReplyKeyboardMarkup:
     mahalas = await db.session.execute(select(db.Mfy))
@@ -552,6 +565,7 @@ async def get_mfys(lang: str) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=1, one_time_keyboard=True).add(*kb_generator)
 
     return kb
+
 
 @sesionExceptions()
 async def get_orders(user_id):
@@ -602,6 +616,7 @@ async def load_ad(message: types.Message, state: FSMContext):
                                  ).add(KeyboardButton(_("🇺🇿/🇷🇺", locale=data['lang']))).add(
                                KeyboardButton(_('Sozlamalar ⚙️', locale=data['lang']))))
 
+
 @sesionExceptions()
 async def sql_read2(message, lang, step):
     app = await db.session.execute(select(db.Application.id).join(db.User, db.User.id == db.Application.user_id).filter(
@@ -615,6 +630,7 @@ async def sql_read2(message, lang, step):
     text = str(text).replace('__', f'{ls[-1]}')
     await bot.send_message(message.from_user.id, text)
     return ls[-1]
+
 
 @sesionExceptionsState()
 async def createUser(state, user_id):
@@ -699,6 +715,7 @@ async def createUser(state, user_id):
 
                 db.session.add_all([user, app])
                 await db.session.commit()
+
 
 @sesionExceptions()
 async def get_tuman_id(tuman: str, lang: str) -> db.Tuman.id:
@@ -829,6 +846,7 @@ async def select_lang(message: types.Message):
         await bot.send_message(message.from_user.id, 'Húrmetli puxara, iltimas interfeys tilin tańlań!',
                                reply_markup=kb_client_change)
 
+
 @sesionExceptions()
 async def change_lang(message: types.Message):
     if message.text == "O'zbekchaga":
@@ -880,6 +898,7 @@ def handlers_settings_changes():
           'Atı familiasın ózgertiw', "Telefon nomerin ózgertiw"]
     for x in ls:
         dp.register_message_handler(change_settings, Text(equals=x))
+
 
 @sesionExceptions()
 async def change_settings(message: types.Message):
@@ -969,7 +988,9 @@ async def changePhone(message: types.Message, state: FSMContext):
 async def sendMyName(message: types.Message):
     user_id = message.from_user.id
     user = await db.session.execute(
-        select(db.User).filter_by(tg_user_id=user_id).options(selectinload(db.User.viloyati), selectinload(db.User.user_tuman), selectinload(db.User.mfys)))
+        select(db.User).filter_by(tg_user_id=user_id).options(selectinload(db.User.viloyati),
+                                                              selectinload(db.User.user_tuman),
+                                                              selectinload(db.User.mfys)))
 
     user = user.scalar()
 
@@ -1006,12 +1027,14 @@ async def change_viloyat_button(message: types.Message):
     await Regist.change_viloyat.set()
     await bot.send_message(message.from_user.id, _("Tugmasini bosing"), reply_markup=kb.add(_('Bekor qilish')))
 
+
 @sesionExceptions()
 async def handlers_uz():
     cats = await db.session.execute(select(db.Viloyat))
     cats = cats.scalars()
     for x in cats:
         dp.register_message_handler(change_viloyat, Text(equals=x.name_uz), state=None)
+
 
 @sesionExceptions()
 async def handler_murojats():
@@ -1020,8 +1043,12 @@ async def handler_murojats():
     for x in cats:
         dp.register_message_handler(get_murojat, Text(equals=f'№{x.id}'), state=None)
 
-@sesionExceptions()
-async def get_murojat(message: types.Message):
+
+app_id = CallbackData("app_id")
+
+
+@sesionExceptionsState()
+async def get_murojat(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     print(int(message.text[1:]))
     apps = await db.session.execute(select(db.Application).filter(
@@ -1053,11 +1080,45 @@ Sizdiń múrájatingiz: {app.application}
 Juwap: {app.answer if app.answer else ''}
 {app.created_at.strftime("%Y.%m.%d")}
                     '''
-    await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
-        KeyboardButton(_('Mening murojaatlarim 🧾'))
-    ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
-          ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
-        KeyboardButton(_('Sozlamalar ⚙️'))))
+
+    # markup = InlineKeyboardMarkup(
+    #     inline_keyboard=
+    #     [
+    #         [
+    #             InlineKeyboardButton(text="'postavit ocenku dlya nomera", callback_data=app.id)],
+    #         [
+    #             InlineKeyboardButton(text=_('Bekor qilish'), callback_data='Bekor qilish'),
+    #
+    #         ]
+    #     ]
+    # )
+
+    if app.answer is None:
+        await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
+    elif app.rating is not None:
+
+        text1 = _("Siz baho kuygansiz.")
+        text2 = _("Siz bergan baho")
+
+        await bot.send_message(user_id, message + str(f'\n{text1} \n{text2} {app.rating}'), reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+            KeyboardButton(_('Mening murojaatlarim 🧾'))
+        ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+              ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+            KeyboardButton(_('Sozlamalar ⚙️'))))
+
+    else:
+        await Regist.rating.set()
+
+        async with state.proxy() as data:
+            data['rating'] = app.id
+
+        await bot.send_message(user_id, message, reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+            KeyboardButton(_('Bahoingizni bering').format(app.id))
+        ).add(KeyboardButton(_('Bekor qilish'))))
 
 
 @dp.message_handler(state=Regist.change_viloyat)
@@ -1203,3 +1264,85 @@ async def logout(message: types.Message):
         await bot.send_message(user_id, 'you has been deleted!', reply_markup=kb_client)
     else:
         await bot.send_message(user_id, 'you are not registered!', reply_markup=kb_client)
+
+
+# @dp.callback_query_handler(text_contains="")
+# async def change_lang(call: types.CallbackQuery):
+#     await call.message.edit_reply_markup()
+#     # print(call.data[-2:])
+#     lang = call.data[-2:]
+#     await db.set_language(lang)
+#     await call.message.answer(_("Ваш язык был изменен", locale=lang))
+
+# @dp.message_handler(Text(startswith="Илтимос, берилган жавоб бўйича ўз баҳоингизни берин"))
+# @dp.message_handler(Text(startswith="Ótinish, berilgen juwap boyınsha óz bahańızdi beriń"))
+# @dp.message_handler(Text(startswith="Пожалуйста, оцените представленный ответ"))
+# @dp.message_handler(Text(startswith="Поставьте оценку"))
+@dp.message_handler(state=Regist.rating)
+async def start_set_raiting(message: types.Message, state: FSMContext):
+    # await Regist.rating.set()
+    # _, id = message.text.split("№")
+    #
+    # async with state.proxy() as data:
+    #     data['rating'] = id
+
+    if message.text == _('Bekor qilish'):
+        await state.finish()
+        await bot.send_message(message.from_user.id, _('Bekor qilish'),
+                               reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                   KeyboardButton(_('Mening murojaatlarim 🧾'))
+                               ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                                     ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                                   KeyboardButton(_('Sozlamalar ⚙️'))))
+        return
+
+
+    await Regist.next()
+    await bot.send_message(message.from_user.id, _('Iltimos, berilgan javob buyicha uz bohoingizni bering'),
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(1)).add(
+                               KeyboardButton(2))
+                           .add(KeyboardButton(3)).add(KeyboardButton(4)).add(KeyboardButton(5)))
+
+
+@dp.message_handler(state=Regist.rating_finish, regexp=r"^(\d+)$")
+@sesionExceptionsState()
+async def put_rating(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    number = message.text
+
+    async with state.proxy() as data:
+
+        user = await db.session.execute(select(db.User).filter_by(tg_user_id=user_id))
+        user = user.scalar()
+
+        if number == _('Bekor qilish'):
+            await bot.send_message(user_id, _('Bekor qilish'),
+                                   reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                       KeyboardButton(_('Mening murojaatlarim 🧾'))
+                                   ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                                         ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                                       KeyboardButton(_('Sozlamalar ⚙️'))))
+            return
+
+        else:
+
+            lst = [1, 2, 3, 4, 5]
+
+            if int(message.text) in lst:
+
+                application = await db.session.execute(
+                    select(db.Application).filter_by(user_id=user.id, id=int(data['rating'])))
+                application = application.scalar()
+                application.rating = int(message.text)
+                await db.session.commit()
+
+                await state.finish()
+
+                await bot.send_message(message.from_user.id, 'ok',
+                                       reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
+                                           KeyboardButton(_('Mening murojaatlarim 🧾'))
+                                       ).add(KeyboardButton(_('Murojaatingizni qoldiring 📝'))
+                                             ).add(KeyboardButton(_("🇺🇿/🇷🇺"))).add(
+                                           KeyboardButton(_('Sozlamalar ⚙️'))))
+            else:
+                await message.reply('Выберите число из клавиатуры!')

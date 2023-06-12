@@ -18,6 +18,7 @@ async def init_tables():
 
 
 async def on_startup(dp):
+    await init_tables()
     # await bot_tg.bot.set_webhook('https://9f3c-82-215-97-98.eu.ngrok.io')
     await set_default_commands(dp)
     print('bot online')
@@ -28,7 +29,7 @@ async def on_startup(dp):
     routes.lang_change_handler()
     routes.handlers_settings_changes()
 
-    await init_tables()
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
