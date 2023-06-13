@@ -1299,9 +1299,9 @@ async def start_set_raiting(message: types.Message, state: FSMContext):
 
     await Regist.next()
     await bot.send_message(message.from_user.id, _('Iltimos, berilgan javob buyicha uz bohoingizni bering'),
-                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(1)).add(
-                               KeyboardButton(2))
-                           .add(KeyboardButton(3)).add(KeyboardButton(4)).add(KeyboardButton(5)))
+                           reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(5)).add(
+                               KeyboardButton(4))
+                           .add(KeyboardButton(3)).add(KeyboardButton(2)).add(KeyboardButton(1)))
 
 
 @dp.message_handler(state=Regist.rating_finish, regexp=r"^(\d+)$")
